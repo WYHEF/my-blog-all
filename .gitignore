@@ -1,0 +1,10 @@
+# Claude Code and OMC state
+.claude/
+.omc/
+
+# Git
+.git/
+
+# OS
+.DS_Store
+Thumbs.db
