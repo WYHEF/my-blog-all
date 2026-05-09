@@ -1,0 +1,32 @@
+---
+import LandingLayout from '@layouts/LandingLayout.astro';
+import Hero from '@components/landing/Hero.astro';
+import CategoryGrid from '@components/landing/CategoryGrid.astro';
+import CaptureSection from '@components/landing/CaptureSection.astro';
+import ProjectShowcase from '@components/landing/ProjectShowcase.astro';
+import LatestPosts from '@components/landing/LatestPosts.astro';
+import { getAllPosts } from '@/utils/post';
+import { SITE_CONFIG } from '@/config';
+
+const posts = await getAllPosts();
+const latestPost = posts[0];
+const latestPostInfo = latestPost
+  ? { title: latestPost.data.title, url: `/blog/${latestPost.slug}` }
+  : undefined;
+---
+
+<LandingLayout title={SITE_CONFIG.title} description={SITE_CONFIG.description}>
+  <Hero
+    title="yufan"
+    subtitle="WYHEF · 五氧化二钒不是废钒"
+    latestPost={latestPostInfo}
+  />
+
+  <CategoryGrid />
+
+  <CaptureSection />
+
+  <ProjectShowcase />
+
+  <LatestPosts posts={posts} limit={5} />
+</LandingLayout>

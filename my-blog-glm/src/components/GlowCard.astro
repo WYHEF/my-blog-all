@@ -1,0 +1,87 @@
+---
+/**
+ * GlowCard - 可复用的发光卡片容器组件
+ *
+ * 功能：
+ *   - 鼠标跟随聚光灯效果（CSS --mouse-x/y 自定义属性）
+ *   - hover 时发光边框 + 上浮阴影
+ *   - 可选的滚动淡入动画
+ *
+ * 用法：
+ *   <GlowCard>你的内容</GlowCard>
+ */
+
+interface Props {
+  class?: string;
+  tag?: string;       // HTML 标签，默认 'div'
+  animate?: boolean;  // 是否启用滚动淡入动画，默认 true
+}
+
+const { class: className, tag = 'div', animate = true } = Astro.props;
+const Tag = tag as any;
+---
+
+<Tag class:list={['glow-card', className, { 'animate-fade-up': animate }]}>
+  <slot />
+</Tag>
+
+<script is:inline>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.glow-card').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = (card as HTMLElement).getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      (card as HTMLElement).style.setProperty('--mouse-x', `${x}%`);
+      (card as HTMLElement).style.setProperty('--mouse-y', `${y}%`);
+    });
+  });
+});
+</script>
+
+<style>
+  .glow-card {
+    position: relative;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    transition: border-color var(--transition-normal),
+                box-shadow var(--transition-normal),
+                transform var(--transition-normal);
+  }
+
+  /* 鼠标跟随聚光灯层 */
+  .glow-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(124, 58, 237, 0.06),
+      transparent 40%
+    );
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Hover 效果 */
+  .glow-card:hover {
+    border-color: var(--color-border-hover);
+    box-shadow: var(--shadow-glow-purple),
+                0 10px 40px rgba(0, 0, 0, 0.3);
+    transform: translateY(-4px);
+  }
+
+  .glow-card:hover::before {
+    opacity: 1;
+  }
+
+  /* 确保内容在聚光灯层之上 */
+  .glow-card :global(*) {
+    position: relative;
+    z-index: 2;
+  }
+</style>

@@ -1,0 +1,153 @@
+---
+import { getCollection } from 'astro:content';
+import { SITE_CONFIG } from '@/config';
+import type { Category } from '@/config';
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  currentSlug?: string;
+  currentCategory?: string;
+}
+
+const { currentSlug, currentCategory } = Astro.props;
+
+// 获取所有文章
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// 根据当前上下文决定显示哪些文章
+let sidebarPosts = [];
+let sidebarTitle = '';
+
+if (currentCategory) {
+  sidebarPosts = sortedPosts.filter(post => post.data.category === currentCategory);
+  sidebarTitle = SITE_CONFIG.categories[currentCategory as Category]?.displayName || '文章列表';
+} else {
+  sidebarPosts = sortedPosts.slice(0, 15);
+  sidebarTitle = '最新文章';
+}
+---
+
+<aside class="left-sidebar">
+  <div class="sidebar-inner">
+    
+    <div class="sidebar-section">
+      <h3 class="sidebar-title">{sidebarTitle}</h3>
+      <ul class="article-list">
+        {sidebarPosts.map(post => (
+          <li>
+            <a 
+              href={`/blog/${post.slug}`} 
+              class:list={['article-link', { active: currentSlug === post.slug }]}
+            >
+              {post.data.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+      
+      {!currentCategory && (
+        <div class="more-link">
+          <a href="/blog">查看归档 →</a>
+        </div>
+      )}
+    </div>
+
+  </div>
+</aside>
+
+<style>
+  .left-sidebar {
+    width: 280px;
+    position: fixed;
+    top: 60px;
+    bottom: 0;
+    left: 0;
+    overflow-y: auto;
+    background-color: var(--color-bg-secondary);
+    border-right: 1px solid var(--color-border);
+    padding: var(--spacing-lg) 0;
+    z-index: 900;
+  }
+  
+  .left-sidebar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .left-sidebar::-webkit-scrollbar-thumb {
+    background-color: #ddd;
+  }
+  
+  .sidebar-inner {
+    padding: 0 var(--spacing-md);
+    width: 100%;
+  }
+  
+  .sidebar-section {
+    margin-bottom: var(--spacing-xl);
+  }
+  
+  .sidebar-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--spacing-sm);
+    padding-left: 0.5rem;
+    opacity: 0.8;
+  }
+  
+  /* 文章列表样式 */
+  .article-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .article-list li {
+    margin-bottom: 2px;
+  }
+  
+  .article-link {
+    display: block;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    border: none;
+    line-height: 1.4;
+    transition: all 0.2s ease;
+  }
+  
+  .article-link:hover {
+    background-color: var(--color-bg); /* 改为背景色变量，或专门的 hover 变量 */
+    color: var(--color-text);
+    /* 也可以用 opacity 调整 */
+    filter: brightness(0.95);
+  }
+  
+  :global(html.dark) .article-link:hover {
+    filter: brightness(1.2); /* 暗色模式下变亮 */
+  }
+  
+  .article-link.active {
+    background-color: var(--color-bg-secondary); /* 使用变量 */
+    color: var(--color-text);
+    font-weight: 600;
+    border-left: 3px solid var(--color-primary);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  }
+  
+  .more-link {
+    margin-top: var(--spacing-md);
+    padding-left: 0.5rem;
+    font-size: 0.9rem;
+  }
+  
+  @media (max-width: 1024px) {
+    .left-sidebar {
+      display: none;
+    }
+  }
+</style>

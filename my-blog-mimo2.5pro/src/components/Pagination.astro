@@ -1,0 +1,105 @@
+---
+interface Props {
+  prev?: {
+    title: string;
+    url: string;
+  };
+  next?: {
+    title: string;
+    url: string;
+  };
+}
+
+const { prev, next } = Astro.props;
+---
+
+{(prev || next) && (
+  <nav class="pagination">
+    {prev && (
+      <a href={prev.url} class="pagination-link prev">
+        <span class="arrow">←</span>
+        <div class="link-content">
+          <span class="label">上一篇</span>
+          <span class="title">{prev.title}</span>
+        </div>
+      </a>
+    )}
+    
+    {next && (
+      <a href={next.url} class="pagination-link next">
+        <div class="link-content">
+          <span class="label">下一篇</span>
+          <span class="title">{next.title}</span>
+        </div>
+        <span class="arrow">→</span>
+      </a>
+    )}
+  </nav>
+)}
+
+<style>
+  .pagination {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-xl);
+    border-top: 1px solid var(--color-border);
+  }
+  
+  .pagination-link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+  
+  .pagination-link:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .pagination-link.next {
+    grid-column: 2;
+    text-align: right;
+  }
+  
+  .arrow {
+    font-size: 1.5rem;
+    color: var(--color-primary);
+  }
+  
+  .link-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .label {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  
+  .title {
+    color: var(--color-text);
+    font-weight: 500;
+  }
+  
+  @media (max-width: 768px) {
+    .pagination {
+      grid-template-columns: 1fr;
+    }
+    
+    .pagination-link.next {
+      grid-column: 1;
+      text-align: left;
+    }
+  }
+</style>
+

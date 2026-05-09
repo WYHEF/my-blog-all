@@ -1,0 +1,162 @@
+---
+// 中部 "Capture / The Moment" 区域
+// 对应 x.ai "Understand The Universe" 区,中间用 Canvas 星空粒子
+import StarfieldCanvas from '@components/landing/StarfieldCanvas.astro';
+import GlowOrb from '@components/landing/GlowOrb.astro';
+---
+
+<section class="capture-section">
+  <!-- 背景大光晕 -->
+  <GlowOrb
+    top="50%"
+    left="50%"
+    size="900px"
+    color="var(--glow-blue)"
+    blur="180px"
+    opacity={0.22}
+    breathe
+  />
+
+  <header class="capture-header" data-reveal>
+    <span class="eyebrow">PHILOSOPHY</span>
+    <h2 class="capture-headline">Why I write &amp; shoot.</h2>
+    <p class="capture-lede">
+      博客不是另一个流量入口,而是一种留住时刻、把粗糙想法雕成形状的方式。
+    </p>
+  </header>
+
+  <div class="capture-stage">
+    <span class="capture-word capture-word--left" data-reveal data-reveal-delay="1">Capture</span>
+
+    <div class="capture-canvas-wrap" data-reveal data-reveal-delay="2">
+      <StarfieldCanvas particleCount={110} />
+    </div>
+
+    <span class="capture-word capture-word--right" data-reveal data-reveal-delay="3">The Moment</span>
+  </div>
+
+  <footer class="capture-footer" data-reveal>
+    <p class="capture-quote">
+      “每一行代码、每一张照片、每一段笔记 —— 都是把流动的时间,固定在某个坐标上。”
+    </p>
+    <span class="capture-byline">— yufan · 2026</span>
+  </footer>
+</section>
+
+<style>
+  .capture-section {
+    position: relative;
+    padding: var(--section-pad) var(--spacing-lg);
+    max-width: 1280px;
+    margin: 0 auto;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .capture-header {
+    max-width: 720px;
+    margin: 0 auto var(--spacing-xl);
+    text-align: center;
+  }
+
+  .capture-headline {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4.5vw, 3.6rem);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--color-text);
+    margin: 0 0 var(--spacing-sm);
+  }
+
+  .capture-lede {
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  /* ---------- 中部双词 + 粒子 ---------- */
+  .capture-stage {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(20px, 4vw, 80px);
+    margin: var(--spacing-xl) 0 var(--spacing-xl);
+  }
+
+  .capture-word {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 6vw, 5rem);
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    color: var(--color-text);
+    line-height: 1;
+    flex-shrink: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(255, 255, 255, 0.55) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  .capture-word--left {
+    text-align: right;
+  }
+
+  .capture-word--right {
+    text-align: left;
+  }
+
+  .capture-canvas-wrap {
+    flex: 0 1 auto;
+    width: clamp(260px, 36vw, 460px);
+    aspect-ratio: 1;
+    position: relative;
+  }
+
+  /* ---------- 底部小语 ---------- */
+  .capture-footer {
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .capture-quote {
+    color: var(--color-text-secondary);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin: 0 0 var(--spacing-sm);
+    font-style: italic;
+  }
+
+  .capture-byline {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  /* ---------- 响应式 ---------- */
+  @media (max-width: 768px) {
+    .capture-stage {
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+
+    .capture-word {
+      text-align: center !important;
+      font-size: clamp(1.8rem, 9vw, 3rem);
+    }
+
+    .capture-canvas-wrap {
+      width: min(85vw, 360px);
+      order: 0;
+    }
+  }
+</style>

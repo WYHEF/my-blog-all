@@ -1,0 +1,105 @@
+---
+/**
+ * 首页 - x.ai 风格
+ *
+ * 布局：
+ *   1. HeroSection: 博客名 + 搜索框 + 粒子背景 + 统计数据
+ *   2. FeatureCards: 三栏特色分区（技术/笔记/游记）
+ *   3. ConstellationDivider: 星座分隔装饰
+ *   4. 最新文章: x.ai 风格卡片列表（左文右图）
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import HeroSection from '@components/HeroSection.astro';
+import FeatureCards from '@components/FeatureCards.astro';
+import ConstellationDivider from '@components/ConstellationDivider.astro';
+import PostCard from '@components/PostCard.astro';
+import { getAllPosts } from '@/utils/post';
+import { extractFirstImage } from '@/utils/post';
+import { SITE_CONFIG } from '@/config';
+
+const posts = await getAllPosts();
+const recentPosts = posts.slice(0, 6);
+
+// 为每篇文章提取封面图
+const postsWithCovers = recentPosts.map(post => ({
+  post,
+  coverImage: extractFirstImage(post.body ?? '')
+}));
+---
+
+<BaseLayout title={SITE_CONFIG.title} description={SITE_CONFIG.description}>
+  <!-- Section 1: 英雄区 -->
+  <HeroSection />
+
+  <!-- Section 2: 特色分区 -->
+  <FeatureCards />
+
+  <!-- Section 3: 星座分隔 -->
+  <ConstellationDivider />
+
+  <!-- Section 4: 最新文章 -->
+  <section class="posts-section">
+    <div class="content-wrapper">
+      <div class="section-header animate-fade-up">
+        <h2 class="section-heading">最新文章</h2>
+        <a href="/category/tech" class="view-all-link">查看全部 &rarr;</a>
+      </div>
+
+      <div class="posts-grid" data-stagger>
+        {postsWithCovers.map(({ post, coverImage }) => (
+          <PostCard post={post} coverImage={coverImage} />
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .posts-section {
+    padding: var(--spacing-3xl) 0;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .section-heading {
+    font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--color-text-primary);
+  }
+
+  .view-all-link {
+    color: var(--color-accent-light);
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    border: none;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .view-all-link:hover {
+    color: var(--color-text-primary);
+    letter-spacing: 0.03em;
+  }
+
+  .posts-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  @media (max-width: 768px) {
+    .section-header {
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+  }
+</style>

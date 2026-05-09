@@ -1,0 +1,278 @@
+---
+// 简单的客户端搜索组件
+---
+
+<div class="search-container">
+  <div class="search-box">
+    <input
+      type="text"
+      id="search-input"
+      class="search-input"
+      placeholder="搜索文章..."
+      aria-label="搜索文章"
+    />
+    <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.35-4.35"></path>
+    </svg>
+  </div>
+
+  <div id="search-results" class="search-results glass-strong" style="display: none;">
+    <div class="results-header">
+      <span id="results-count">搜索结果</span>
+      <button id="close-results" class="close-btn" aria-label="关闭搜索结果">×</button>
+    </div>
+    <div id="results-list" class="results-list"></div>
+  </div>
+</div>
+
+<style>
+  .search-container {
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .search-box {
+    position: relative;
+    width: 100%;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    padding-left: 2.2rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--color-text);
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    transition: all var(--transition-fast) ease;
+    backdrop-filter: blur(4px);
+  }
+
+  :global(html.light) .search-input {
+    background: rgba(0, 0, 0, 0.03);
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--color-accent-2);
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15);
+  }
+
+  .search-input::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 0.6rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-muted);
+    pointer-events: none;
+  }
+
+  .search-results {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    right: 0;
+    border-radius: var(--radius-md);
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1000;
+  }
+
+  .results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: color var(--transition-fast) ease;
+  }
+
+  .close-btn:hover {
+    color: var(--color-text);
+  }
+
+  .results-list {
+    padding: var(--spacing-sm);
+  }
+
+  .result-item {
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    margin-bottom: 2px;
+    transition: background-color var(--transition-fast) ease;
+  }
+
+  .result-item:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  :global(html.light) .result-item:hover {
+    background: rgba(0, 0, 0, 0.03);
+  }
+
+  .result-item a {
+    display: block;
+    color: var(--color-text);
+    text-decoration: none;
+    border-bottom: none;
+  }
+
+  .result-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .result-excerpt {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.5;
+  }
+
+  .result-meta {
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    margin-top: 0.25rem;
+  }
+
+  .no-results {
+    padding: var(--spacing-lg);
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+  }
+</style>
+
+<script>
+  interface SearchItem {
+    title: string;
+    description: string;
+    url: string;
+    category: string;
+    tags: string[];
+  }
+
+  let searchData: SearchItem[] = [];
+  let searchInitialized = false;
+
+  async function loadSearchData() {
+    try {
+      const response = await fetch('/search-data.json');
+      searchData = await response.json();
+    } catch (error) {
+      console.error('Failed to load search data:', error);
+    }
+  }
+
+  function search(query: string): SearchItem[] {
+    if (!query.trim()) return [];
+    const lowerQuery = query.toLowerCase();
+    return searchData.filter(item =>
+      item.title.toLowerCase().includes(lowerQuery) ||
+      item.description.toLowerCase().includes(lowerQuery) ||
+      item.tags.some(tag => tag.toLowerCase().includes(lowerQuery))
+    );
+  }
+
+  function renderResults(results: SearchItem[]) {
+    const resultsContainer = document.getElementById('results-list');
+    const resultsCount = document.getElementById('results-count');
+    const resultsPanel = document.getElementById('search-results');
+    if (!resultsContainer || !resultsCount || !resultsPanel) return;
+
+    if (results.length === 0) {
+      resultsContainer.innerHTML = '<div class="no-results">未找到相关文章</div>';
+      resultsCount.textContent = '无结果';
+    } else {
+      resultsCount.textContent = `找到 ${results.length} 篇文章`;
+      resultsContainer.innerHTML = results
+        .map(item => `
+          <div class="result-item">
+            <a href="${item.url}">
+              <div class="result-title">${item.title}</div>
+              <div class="result-excerpt">${item.description}</div>
+              <div class="result-meta">${item.category} · ${item.tags.join(', ')}</div>
+            </a>
+          </div>
+        `)
+        .join('');
+    }
+    resultsPanel.style.display = 'block';
+  }
+
+  function initSearch() {
+    if (searchInitialized) return;
+    searchInitialized = true;
+
+    loadSearchData();
+
+    const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    const resultsPanel = document.getElementById('search-results');
+    const closeBtn = document.getElementById('close-results');
+    if (!searchInput || !resultsPanel || !closeBtn) return;
+
+    let debounceTimer: number;
+    searchInput.addEventListener('input', (e) => {
+      clearTimeout(debounceTimer);
+      debounceTimer = window.setTimeout(() => {
+        const query = (e.target as HTMLInputElement).value;
+        if (query.trim()) {
+          renderResults(search(query));
+        } else {
+          resultsPanel.style.display = 'none';
+        }
+      }, 300);
+    });
+
+    closeBtn.addEventListener('click', () => {
+      resultsPanel.style.display = 'none';
+      searchInput.value = '';
+    });
+
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.search-container')) {
+        resultsPanel.style.display = 'none';
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        resultsPanel.style.display = 'none';
+      }
+    });
+  }
+
+  // 兼容 View Transitions 的初始化
+  document.addEventListener('astro:page-load', initSearch);
+  // 首次加载时也初始化（如果 astro:page-load 已经触发过）
+  if (document.readyState !== 'loading') {
+    initSearch();
+  }
+</script>

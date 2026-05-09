@@ -1,0 +1,128 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="404 - 页面未找到">
+  <div class="container">
+    <div class="error-page">
+      <div class="error-content">
+        <h1 class="error-code">404</h1>
+        <h2 class="error-title">页面未找到</h2>
+        <p class="error-description">
+          抱歉，您访问的页面不存在或已被移除。
+        </p>
+        <div class="error-actions">
+          <a href="/" class="btn btn-primary">返回首页</a>
+          <a href="/blog" class="btn btn-secondary">浏览文章</a>
+        </div>
+      </div>
+      <div class="error-illustration">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="100" r="80" fill="var(--color-bg-secondary)" />
+          <circle cx="80" cy="90" r="8" fill="var(--color-text)" />
+          <circle cx="120" cy="90" r="8" fill="var(--color-text)" />
+          <path d="M 70 130 Q 100 110 130 130" stroke="var(--color-text)" stroke-width="4" fill="none" stroke-linecap="round" />
+        </svg>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .error-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    padding: var(--spacing-xl) 0;
+  }
+  
+  .error-content {
+    max-width: 500px;
+    margin-bottom: var(--spacing-xl);
+  }
+  
+  .error-code {
+    font-size: 6rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-md);
+    line-height: 1;
+  }
+  
+  .error-title {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .error-description {
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xl);
+  }
+  
+  .error-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+  }
+  
+  .btn {
+    display: inline-block;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-primary {
+    background-color: var(--color-primary);
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--color-primary-hover);
+  }
+  
+  .btn-secondary {
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+  }
+  
+  .btn-secondary:hover {
+    background-color: var(--color-border);
+  }
+  
+  .error-illustration {
+    width: 200px;
+    height: 200px;
+    opacity: 0.5;
+  }
+  
+  @media (max-width: 768px) {
+    .error-code {
+      font-size: 4rem;
+    }
+    
+    .error-title {
+      font-size: 1.5rem;
+    }
+    
+    .error-description {
+      font-size: 1rem;
+    }
+    
+    .error-actions {
+      flex-direction: column;
+      width: 100%;
+    }
+    
+    .btn {
+      width: 100%;
+    }
+  }
+</style>
+

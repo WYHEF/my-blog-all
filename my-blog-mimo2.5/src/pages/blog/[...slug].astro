@@ -1,0 +1,255 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Pagination from '@components/Pagination.astro';
+import FontResizer from '@components/FontResizer.astro';
+import { formatDate, getAdjacentPosts } from '@/utils/post';
+import { SITE_CONFIG } from '@/config';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post }
+  }));
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await post.render();
+
+const { title, description, pubDate, updatedDate, category, tags, cover } = post.data;
+const categoryConfig = SITE_CONFIG.categories[category];
+
+const { prev, next } = await getAdjacentPosts(post.slug);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  image={cover}
+  article={true}
+  publishedTime={pubDate}
+  tags={tags}
+  currentSlug={post.slug}
+  currentCategory={category}
+  headings={headings}
+>
+  <div class="article-container">
+    <article class="post">
+      <header class="post-header">
+        <div class="post-meta">
+          <a href={`/category/${category}`} class="category-tag">
+            {categoryConfig.displayName}
+          </a>
+          <span class="meta-dot"></span>
+          <time datetime={pubDate.toISOString()}>
+            {formatDate(pubDate)}
+          </time>
+        </div>
+
+        <h1 class="post-title">{title}</h1>
+        <p class="post-description">{description}</p>
+
+        {tags && tags.length > 0 && (
+          <div class="post-tags">
+            {tags.map(tag => (
+              <a href={`/tags/${tag}`} class="tag">#{tag}</a>
+            ))}
+          </div>
+        )}
+
+        {cover && (
+          <img src={cover} alt={title} class="post-cover">
+        )}
+      </header>
+
+      <div class="post-toolbar">
+        <FontResizer />
+      </div>
+
+      <div class="post-content">
+        <Content />
+
+        {updatedDate && (
+          <div class="post-updated">
+            最后更新：{formatDate(updatedDate)}
+          </div>
+        )}
+      </div>
+
+      <Pagination
+        prev={prev ? { title: prev.data.title, url: `/blog/${prev.slug}` } : undefined}
+        next={next ? { title: next.data.title, url: `/blog/${next.slug}` } : undefined}
+      />
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .article-container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: var(--spacing-xl) var(--spacing-lg);
+    width: 100%;
+  }
+
+  .post {
+    font-size: var(--article-font-size);
+    line-height: 1.8;
+  }
+
+  .post-header {
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .meta-dot {
+    width: 3px;
+    height: 3px;
+    background-color: var(--color-text-muted);
+    border-radius: 50%;
+  }
+
+  .category-tag {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: none;
+  }
+
+  .category-tag:hover {
+    color: var(--color-primary-hover);
+  }
+
+  .post-title {
+    font-size: 2.5rem;
+    line-height: 1.2;
+    margin-bottom: var(--spacing-md);
+    letter-spacing: -0.03em;
+    font-weight: 700;
+  }
+
+  .post-description {
+    font-size: 1.1rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.6;
+  }
+
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    background-color: var(--color-bg-card);
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .tag:hover {
+    color: var(--color-text);
+    border-color: var(--color-border-hover);
+  }
+
+  .post-cover {
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+    margin-top: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    border: 1px solid var(--color-border);
+  }
+
+  .post-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .post-content {
+    line-height: 1.8;
+    color: var(--color-text-secondary);
+  }
+
+  .post-content :global(h2) {
+    margin-top: var(--spacing-xl);
+    margin-bottom: var(--spacing-md);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-text);
+    letter-spacing: -0.02em;
+  }
+
+  .post-content :global(h3) {
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-sm);
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .post-content :global(p) {
+    margin-bottom: 1.5em;
+  }
+
+  .post-content :global(img) {
+    margin: var(--spacing-lg) 0;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    width: 100%;
+  }
+
+  .post-content :global(a) {
+    color: var(--color-primary);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+
+  .post-content :global(a:hover) {
+    border-bottom-color: var(--color-primary);
+  }
+
+  .post-updated {
+    margin-top: var(--spacing-xl);
+    padding: var(--spacing-md);
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+  }
+
+  @media (max-width: 768px) {
+    .article-container {
+      padding: var(--spacing-lg) var(--spacing-md);
+    }
+
+    .post-title {
+      font-size: 2rem;
+    }
+  }
+</style>

@@ -1,0 +1,161 @@
+---
+import { getCollection } from 'astro:content';
+import { SITE_CONFIG } from '@/config';
+import type { Category } from '@/config';
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  currentSlug?: string;
+  currentCategory?: string;
+}
+
+const { currentSlug, currentCategory } = Astro.props;
+
+// 获取所有文章
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// 根据当前上下文决定显示哪些文章
+let sidebarPosts = [];
+let sidebarTitle = '';
+
+if (currentCategory) {
+  sidebarPosts = sortedPosts.filter(post => post.data.category === currentCategory);
+  sidebarTitle = SITE_CONFIG.categories[currentCategory as Category]?.displayName || '文章列表';
+} else {
+  sidebarPosts = sortedPosts.slice(0, 15);
+  sidebarTitle = '最新文章';
+}
+---
+
+<aside class="left-sidebar">
+  <div class="sidebar-inner">
+    
+    <div class="sidebar-section">
+      <h3 class="sidebar-title">{sidebarTitle}</h3>
+      <ul class="article-list">
+        {sidebarPosts.map(post => (
+          <li>
+            <a 
+              href={`/blog/${post.slug}`} 
+              class:list={['article-link', { active: currentSlug === post.slug }]}
+            >
+              {post.data.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+      
+      {!currentCategory && (
+        <div class="more-link">
+          <a href="/blog">查看归档 →</a>
+        </div>
+      )}
+    </div>
+
+  </div>
+</aside>
+
+<style>
+  .left-sidebar {
+    width: 280px;
+    position: fixed;
+    top: 60px;
+    bottom: 0;
+    left: 0;
+    overflow-y: auto;
+    background-color: var(--color-bg-secondary);
+    border-right: 1px solid var(--color-border-light);
+    padding: var(--spacing-lg) 0;
+    z-index: 900;
+    scroll-behavior: smooth;
+  }
+
+  .left-sidebar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .left-sidebar::-webkit-scrollbar-thumb {
+    background-color: var(--color-border);
+    border-radius: var(--radius-full);
+  }
+  .left-sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-text-tertiary);
+  }
+
+  .sidebar-inner {
+    padding: 0 var(--spacing-md);
+    width: 100%;
+  }
+
+  .sidebar-section {
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .sidebar-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: var(--spacing-sm);
+    padding-left: 0.75rem;
+  }
+
+  .article-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .article-list li {
+    margin-bottom: 2px;
+  }
+
+  .article-link {
+    display: block;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.88rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    border: none;
+    line-height: 1.45;
+    transition: all var(--transition-fast);
+    position: relative;
+  }
+
+  .article-link:hover {
+    background-color: var(--color-primary-light);
+    color: var(--color-text);
+  }
+
+  .article-link.active {
+    background-color: var(--color-primary-light);
+    color: var(--color-text);
+    font-weight: 600;
+    border-left: 3px solid var(--color-primary);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  }
+
+  .more-link {
+    margin-top: var(--spacing-md);
+    padding-left: 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .more-link a {
+    color: var(--color-primary);
+    font-weight: 500;
+    transition: color var(--transition-fast);
+  }
+
+  .more-link a:hover {
+    color: var(--color-primary-hover);
+  }
+
+  @media (max-width: 1024px) {
+    .left-sidebar {
+      display: none;
+    }
+  }
+</style>

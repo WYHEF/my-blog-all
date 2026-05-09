@@ -1,0 +1,231 @@
+# 我的博客
+
+一个基于 Astro 构建的简洁、现代化的个人博客网站。
+
+## ✨ 特性
+
+- 🚀 **快速加载** - 使用 Astro 静态站点生成，零 JavaScript 默认加载
+- 📝 **Markdown 写作** - 支持 Markdown 和 MDX 格式
+- 🎨 **响应式设计** - 完美适配桌面端和移动端
+- 🔍 **本地搜索** - 无需后端的客户端搜索功能
+- 🏷️ **分类和标签** - 灵活的内容组织方式
+- 🎯 **SEO 优化** - 完善的 SEO 元数据和 sitemap
+- 💅 **代码高亮** - 内置语法高亮支持
+- 📱 **PWA 就绪** - 可作为渐进式 Web 应用
+
+## 📁 项目结构
+
+```
+/
+├── public/              # 静态资源
+│   ├── images/         # 图片资源
+│   └── robots.txt      # 搜索引擎爬虫配置
+├── src/
+│   ├── components/     # Astro 组件
+│   │   ├── Header.astro
+│   │   ├── Footer.astro
+│   │   ├── PostCard.astro
+│   │   ├── TableOfContents.astro
+│   │   ├── Pagination.astro
+│   │   └── Search.astro
+│   ├── content/        # 内容集合
+│   │   ├── blog/       # 博客文章（Markdown）
+│   │   └── config.ts   # 内容集合配置
+│   ├── layouts/        # 页面布局
+│   │   └── BaseLayout.astro
+│   ├── pages/          # 页面路由
+│   │   ├── index.astro         # 首页
+│   │   ├── blog/
+│   │   │   └── [...slug].astro # 文章详情页
+│   │   ├── category/
+│   │   │   └── [category].astro # 分类页
+│   │   ├── tags/
+│   │   │   ├── index.astro      # 标签列表
+│   │   │   └── [tag].astro      # 标签页
+│   │   ├── about.astro          # 关于页
+│   │   ├── 404.astro            # 404 页面
+│   │   └── search-data.json.ts  # 搜索数据 API
+│   ├── styles/         # 全局样式
+│   │   └── global.css
+│   ├── utils/          # 工具函数
+│   │   ├── post.ts     # 文章相关工具
+│   │   └── seo.ts      # SEO 工具
+│   └── config.ts       # 站点配置
+├── astro.config.mjs    # Astro 配置
+├── package.json
+└── tsconfig.json
+```
+
+## 🚀 快速开始
+
+### 1. 安装依赖
+
+```bash
+npm install
+```
+
+### 2. 启动开发服务器
+
+```bash
+npm run dev
+```
+
+访问 `http://localhost:4321` 查看网站。
+
+### 3. 构建生产版本
+
+```bash
+npm run build
+```
+
+构建产物将生成在 `dist/` 目录。
+
+### 4. 预览生产版本
+
+```bash
+npm run preview
+```
+
+## ✍️ 写作指南
+
+### 创建新文章
+
+在 `src/content/blog/` 目录下创建一个新的 Markdown 文件：
+
+```markdown
+---
+title: '文章标题'
+description: '文章描述'
+pubDate: 2024-01-15
+category: 'tech'  # tech / notes / travel
+tags: ['标签1', '标签2']
+cover: '/images/cover.jpg'  # 可选
+draft: false  # 可选，设为 true 则不会发布
+---
+
+文章内容...
+```
+
+### Frontmatter 字段说明
+
+- `title`: 文章标题（必需）
+- `description`: 文章描述，用于摘要和 SEO（必需）
+- `pubDate`: 发布日期（必需）
+- `updatedDate`: 更新日期（可选）
+- `category`: 分类，可选值：`tech`、`notes`、`travel`（必需）
+- `tags`: 标签数组（可选）
+- `cover`: 封面图片路径（可选）
+- `draft`: 是否为草稿（可选，默认 false）
+
+### 文章分类
+
+博客支持三个预设分类：
+
+- **Tech (技术)**: 技术文章和教程
+- **Notes (笔记)**: 学习笔记和总结
+- **Travel (游记)**: 旅行见闻
+
+可以在 `src/config.ts` 中修改或添加新分类。
+
+## ⚙️ 配置
+
+### 站点配置
+
+编辑 `src/config.ts` 修改站点信息：
+
+```typescript
+export const SITE_CONFIG = {
+  title: '我的博客',
+  description: '记录技术、学习和生活',
+  author: '站长名字',
+  avatar: '/avatar.jpg',
+  email: 'your@email.com',
+  github: 'https://github.com/yourusername',
+  // ...更多配置
+};
+```
+
+### Astro 配置
+
+编辑 `astro.config.mjs` 修改构建配置：
+
+```javascript
+export default defineConfig({
+  site: 'https://your-domain.com', // 替换为你的域名
+  integrations: [mdx(), sitemap()],
+  // ...更多配置
+});
+```
+
+## 🎨 自定义样式
+
+全局样式定义在 `src/styles/global.css` 中，使用 CSS 变量进行主题配置：
+
+```css
+:root {
+  --color-primary: #0066cc;
+  --color-bg: #ffffff;
+  --color-text: #1a1a1a;
+  /* ...更多变量 */
+}
+```
+
+支持自动暗色模式，通过 `prefers-color-scheme` 媒体查询实现。
+支持暗色模式和亮色模式手动切换。
+
+## 📦 部署
+
+### Vercel（推荐）
+
+1. 将代码推送到 GitHub
+2. 在 [Vercel](https://vercel.com) 导入项目
+3. Vercel 会自动检测 Astro 并完成部署
+
+### Netlify
+
+1. 将代码推送到 GitHub
+2. 在 [Netlify](https://netlify.com) 导入项目
+3. 构建命令：`npm run build`
+4. 发布目录：`dist`
+
+### GitHub Pages
+
+```bash
+# 构建
+npm run build
+
+# 部署到 gh-pages 分支
+# 需要配置 GitHub Actions 或使用 gh-pages 包
+```
+
+## 📝 开发注意事项
+
+1. **图片路径**: 将图片放在 `public/images/` 目录，在 Markdown 中使用 `/images/xxx.jpg` 引用
+2. **路径别名**: 项目配置了路径别名，可以使用 `@/` 代替 `src/`
+3. **类型检查**: 使用 TypeScript 提供类型安全
+4. **代码风格**: 建议使用 ESLint 和 Prettier 保持代码一致性
+
+## 🛠️ 技术栈
+
+- [Astro](https://astro.build) - 静态站点生成器
+- [TypeScript](https://www.typescriptlang.org/) - 类型安全
+- [MDX](https://mdxjs.com/) - Markdown 增强
+- CSS Variables - 主题系统
+
+## 📄 许可证
+
+MIT License
+
+## 🤝 贡献
+
+欢迎提交 Issue 和 Pull Request！
+
+## 📮 联系方式
+
+- Email: wyf1992570@163.com
+- GitHub: @WYHEF
+
+---
+
+⭐ 如果这个项目对你有帮助，欢迎 Star！
+

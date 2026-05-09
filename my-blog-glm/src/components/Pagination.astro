@@ -1,0 +1,111 @@
+---
+interface Props {
+  prev?: { title: string; url: string };
+  next?: { title: string; url: string };
+}
+
+const { prev, next } = Astro.props;
+---
+
+{(prev || next) && (
+  <nav class="pagination">
+    {prev && (
+      <a href={prev.url} class="pagination-link prev">
+        <span class="arrow">&larr;</span>
+        <div class="link-content">
+          <span class="label">上一篇</span>
+          <span class="title">{prev.title}</span>
+        </div>
+      </a>
+    )}
+
+    {next && (
+      <a href={next.url} class="pagination-link next">
+        <div class="link-content">
+          <span class="label">下一篇</span>
+          <span class="title">{next.title}</span>
+        </div>
+        <span class="arrow">&rarr;</span>
+      </a>
+    )}
+  </nav>
+)}
+}
+
+<style>
+  .pagination {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-xl);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .pagination-link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: inherit;
+    border-bottom: none;
+    transition: all var(--transition-normal);
+  }
+
+  .pagination-link:hover {
+    border-color: var(--color-border-hover);
+    box-shadow: var(--shadow-glow-purple);
+    transform: translateY(-2px);
+  }
+
+  .pagination-link.next {
+    grid-column: 2;
+    text-align: right;
+  }
+
+  .arrow {
+    font-size: 1.3rem;
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  .link-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+  }
+
+  .label {
+    font-size: 0.72rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    font-family: var(--font-mono);
+  }
+
+  .title {
+    color: var(--color-text-primary);
+    font-weight: 500;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media (max-width: 768px) {
+    .pagination {
+      grid-template-columns: 1fr;
+    }
+
+    .pagination-link.next {
+      grid-column: 1;
+      text-align: left;
+    }
+  }
+</style>

@@ -1,0 +1,92 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import PostCard from '@components/PostCard.astro';
+import { getAllTags, getPostsByTag } from '@/utils/post';
+import { SITE_CONFIG } from '@/config';
+
+export async function getStaticPaths() {
+  const tags = await getAllTags();
+
+  return Promise.all(
+    tags.map(async ({ tag }) => {
+      const posts = await getPostsByTag(tag);
+      return {
+        params: { tag },
+        props: { posts, tag }
+      };
+    })
+  );
+}
+
+const { posts, tag } = Astro.props;
+---
+
+<BaseLayout
+  title={`#${tag} - ${SITE_CONFIG.title}`}
+  description={`Posts tagged with ${tag}`}
+>
+  <div class="container">
+    <header class="tag-header">
+      <span class="tag-kicker">[ TAG ]</span>
+      <h1 class="tag-title">
+        <span class="tag-hash">#</span>{tag}
+      </h1>
+      <p class="tag-count">{posts.length} {posts.length === 1 ? 'post' : 'posts'}</p>
+    </header>
+
+    <div class="posts-list">
+      {posts.map((post) => (
+        <PostCard post={post} />
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .tag-header {
+    padding: var(--spacing-xl) 0 var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .tag-kicker {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.18em;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .tag-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--color-text);
+    margin: 0 0 var(--spacing-sm);
+    display: flex;
+    align-items: baseline;
+    gap: 0.05em;
+  }
+
+  .tag-hash {
+    color: var(--color-text-tertiary);
+    font-weight: 500;
+  }
+
+  .tag-count {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .posts-list {
+    display: flex;
+    flex-direction: column;
+  }
+</style>

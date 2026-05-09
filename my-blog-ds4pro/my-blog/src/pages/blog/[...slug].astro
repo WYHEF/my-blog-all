@@ -1,0 +1,222 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Pagination from '@components/Pagination.astro';
+import { formatDate, getAdjacentPosts } from '@/utils/post';
+import { SITE_CONFIG } from '@/config';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post }
+  }));
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await post.render();
+
+const { title, description, pubDate, updatedDate, category, tags, cover } = post.data;
+const categoryConfig = SITE_CONFIG.categories[category];
+
+const { prev, next } = await getAdjacentPosts(post.slug);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  image={cover}
+  article={true}
+  publishedTime={pubDate}
+  tags={tags}
+  currentSlug={post.slug}
+  currentCategory={category}
+  headings={headings}
+>
+  <div class="article-container">
+    <article class="post">
+      <header class="post-header">
+        <div class="post-meta">
+          <a href={`/category/${category}`} class="category-tag">
+            {categoryConfig.displayName}
+          </a>
+          <time datetime={pubDate.toISOString()}>
+            {formatDate(pubDate)}
+          </time>
+        </div>
+        
+        <h1 class="post-title">{title}</h1>
+        <p class="post-description">{description}</p>
+        
+        {tags && tags.length > 0 && (
+          <div class="post-tags">
+            {tags.map(tag => (
+              <a href={`/tags/${tag}`} class="tag">
+                #{tag}
+              </a>
+            ))}
+          </div>
+        )}
+        
+        {cover && (
+          <img src={cover} alt={title} class="post-cover">
+        )}
+      </header>
+      
+      <div class="post-content">
+        <Content />
+        
+        {updatedDate && (
+          <div class="post-updated">
+            最后更新：{formatDate(updatedDate)}
+          </div>
+        )}
+      </div>
+      
+      <Pagination
+        prev={prev ? { title: prev.data.title, url: `/blog/${prev.slug}` } : undefined}
+        next={next ? { title: next.data.title, url: `/blog/${next.slug}` } : undefined}
+      />
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  /* 限制文章内容的最大宽度，保证阅读体验，但靠左对齐 */
+  .article-container {
+    max-width: 900px; /* 文章正文不宜过宽 */
+    margin: 0; 
+    width: 100%;
+  }
+
+  /* 让整个文章区域都响应字号设置 */
+  .post {
+    font-size: var(--article-font-size);
+    line-height: 1.8;
+  }
+
+  .post-header {
+    margin-bottom: var(--spacing-xl);
+    text-align: left;
+  }
+  
+  .post-meta {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--spacing-sm);
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .category-tag {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  
+  .post-title {
+    font-size: 2.5em; /* 相对于正文字号的倍数 */
+    line-height: 1.2;
+    margin-bottom: var(--spacing-md);
+    font-family: var(--font-heading);
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+  
+  .post-description {
+    font-size: 1.2em; /* 相对于正文字号的倍数 */
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.6;
+    font-family: var(--font-heading);
+    font-style: italic;
+  }
+  
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .tag {
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    background-color: var(--color-bg-secondary);
+    padding: 0.2em 0.5em;
+    border-radius: var(--radius-sm);
+  }
+  
+  .tag:hover {
+    color: var(--color-primary);
+    background-color: var(--color-border);
+  }
+  
+  .post-cover {
+    width: 100%;
+    aspect-ratio: 21 / 9; /* 更宽的比例 */
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    margin-top: var(--spacing-lg);
+  }
+  
+  .post-content {
+    /* 移除 font-size 设置，因为它现在继承自 .post */
+    /* font-size: var(--article-font-size); */ 
+    line-height: 1.8;
+  }
+  
+  .post-content :global(h2) {
+    margin-top: var(--spacing-xl);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: 0;
+    border-bottom: none;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+  
+  .post-content :global(h3) {
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-sm);
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  
+  .post-content :global(p) {
+    margin-bottom: 1.5em;
+  }
+  
+  .post-content :global(img) {
+    margin: var(--spacing-lg) 0;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* 轻微阴影 */
+    width: 100%;
+  }
+  
+  .post-updated {
+    margin-top: var(--spacing-xl);
+    padding: var(--spacing-md);
+    background-color: var(--color-bg-secondary);
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    text-align: left; /* 改为左对齐 */
+    font-family: var(--font-mono);
+  }
+  
+  @media (max-width: 768px) {
+    .post-title {
+      font-size: 2.25rem;
+    }
+    
+    .post-description {
+      font-size: 1.1rem;
+    }
+  }
+</style>

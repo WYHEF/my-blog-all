@@ -1,0 +1,210 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { SITE_CONFIG } from '@/config';
+
+// B 站视频列表
+const videos = [
+  { bvid: 'BV1wXQHYBEtt', title: '视频教程 1' },
+  { bvid: 'BV1FJKezFETE', title: '视频教程 2' },
+  { bvid: 'BV1GQKYzEEfs', title: '视频教程 3' },
+  { bvid: 'BV1yqrNBoEh3', title: '视频教程 4' },
+  { bvid: 'BV1m8rNBaEaX', title: '视频教程 5' },
+  { bvid: 'BV1M8rNBYEj2', title: '视频教程 6' },
+  { bvid: 'BV1ubrNBPEg3', title: '视频教程 7' },
+  { bvid: 'BV1UbrNBAEGD', title: '视频教程 8' },
+  { bvid: 'BV1UbrNBAE3n', title: '视频教程 9' },
+  { bvid: 'BV12YrNB8EW8', title: '视频教程 10' },
+  { bvid: 'BV1xYrNBhEZe', title: '视频教程 11' },
+  { bvid: 'BV14YrNBhEqb', title: '视频教程 12' },
+];
+---
+
+<BaseLayout
+  title={`视频教程 - ${SITE_CONFIG.title}`}
+  description={`${SITE_CONFIG.author}的 B 站视频教程合集`}
+>
+  <div class="videos-container">
+    <header class="videos-header">
+      <span class="videos-kicker">[ VIDEOS ]</span>
+      <h1 class="videos-title">Tutorials &amp; tracks.</h1>
+      <p class="videos-desc">
+        我在 B 站发布的教程视频合集,欢迎
+        <a href={SITE_CONFIG.bilibili} target="_blank" rel="noopener noreferrer">关注 B 站频道</a>
+        获取更多内容。
+      </p>
+    </header>
+
+    <div class="videos-grid">
+      {videos.map((video, index) => (
+        <article class="video-card" data-reveal data-reveal-delay={String(Math.min(index % 3 + 1, 4))}>
+          <div class="video-wrapper">
+            <iframe
+              src={`//player.bilibili.com/player.html?bvid=${video.bvid}&page=1`}
+              scrolling="no"
+              border="0"
+              frameborder="no"
+              framespacing="0"
+              allowfullscreen="true"
+              loading="lazy"
+            ></iframe>
+          </div>
+          <div class="video-info">
+            <span class="video-index">EP {String(index + 1).padStart(2, '0')}</span>
+            <a
+              href={`https://www.bilibili.com/video/${video.bvid}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="video-link"
+            >
+              在 B 站观看
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"></path>
+                <path d="m12 5 7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .videos-container {
+    max-width: 1240px;
+    margin: 0;
+    padding-right: var(--spacing-lg);
+  }
+
+  /* ---------- 头部 ---------- */
+  .videos-header {
+    padding: var(--spacing-xl) 0 var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .videos-kicker {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.18em;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .videos-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 3.6rem);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--color-text);
+    margin: 0 0 var(--spacing-sm);
+  }
+
+  .videos-desc {
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .videos-desc a {
+    color: var(--color-text);
+    border-bottom: 1px solid var(--color-border-strong);
+    transition: border-color var(--duration-fast) var(--ease-smooth);
+  }
+
+  .videos-desc a:hover {
+    border-bottom-color: var(--color-text);
+  }
+
+  /* ---------- 网格 ---------- */
+  .videos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-lg);
+  }
+
+  /* ---------- 单卡 ---------- */
+  .video-card {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    background: rgba(255, 255, 255, 0.02);
+    transition: border-color var(--duration-fast) var(--ease-smooth),
+                transform var(--duration-fast) var(--ease-smooth),
+                box-shadow var(--duration-base) var(--ease-smooth);
+  }
+
+  .video-card:hover {
+    border-color: var(--color-border-strong);
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06),
+                0 20px 60px -20px rgba(120, 170, 255, 0.2);
+  }
+
+  .video-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 60%;
+    overflow: hidden;
+    background: #000;
+  }
+
+  .video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .video-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .video-index {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--color-text-tertiary);
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .video-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    border: none;
+    transition: color var(--duration-fast) var(--ease-smooth),
+                gap var(--duration-fast) var(--ease-smooth);
+  }
+
+  .video-link:hover {
+    color: var(--color-text);
+    gap: 0.55rem;
+  }
+
+  /* ---------- 响应式 ---------- */
+  @media (max-width: 768px) {
+    .videos-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .videos-container {
+      padding-right: 0;
+    }
+  }
+</style>

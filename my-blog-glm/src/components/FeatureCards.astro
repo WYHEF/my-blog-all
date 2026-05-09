@@ -1,0 +1,161 @@
+---
+/**
+ * FeatureCards - 首页特色分区（三栏卡片网格）
+ * 展示博客的三大分类：技术探索、学习笔记、旅行见闻
+ */
+import { SITE_CONFIG } from '@/config';
+
+const features = [
+  {
+    key: 'tech',
+    icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>`,
+    title: '技术探索',
+    description: '深入 Python、AI、系统编程等技术领域，记录学习心得与实践经验',
+    accentColor: '#7c3aed'
+  },
+  {
+    key: 'notes',
+    icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+    title: '学习笔记',
+    description: '整理知识体系，沉淀思考过程，构建个人知识库与经验总结',
+    accentColor: '#10b981'
+  },
+  {
+    key: 'travel',
+    icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+    title: '旅行见闻',
+    description: '用镜头记录世界，用文字分享旅途中的故事与感悟',
+    accentColor: '#f59e0b'
+  }
+];
+---
+
+<section class="features-section">
+  <div class="content-wrapper">
+    <h2 class="section-heading animate-fade-up">
+      探索 <span class="gradient-text">知识宇宙</span>
+    </h2>
+
+    <div class="features-grid" data-stagger>
+      {features.map((feature, index) => (
+        <a href={`/category/${feature.key}`} class="feature-card glow-card animate-fade-up" data-accent={feature.accentColor}>
+          <div class="feature-icon" set:html={feature.icon}></div>
+          <h3 class="feature-title">{feature.title}</h3>
+          <p class="feature-desc">{feature.description}</p>
+          <span class="feature-link">
+            浏览文章
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </span>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .features-section {
+    padding: var(--spacing-3xl) 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .section-heading {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--spacing-xl);
+    text-align: center;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+  }
+
+  .feature-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border: none;
+    padding: var(--spacing-xl);
+    position: relative;
+  }
+
+  /* 顶部强调色线 */
+  .feature-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: var(--spacing-xl);
+    right: var(--spacing-xl);
+    height: 2px;
+    background: attr(data-accent color, var(--color-accent));
+    border-radius: 0 0 2px 2px;
+    opacity: 0.6;
+    transition: opacity var(--transition-normal);
+  }
+
+  .feature-card:hover::after {
+    opacity: 1;
+  }
+
+  .feature-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-md);
+    background: rgba(124, 58, 237, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-accent-light);
+    margin-bottom: var(--spacing-md);
+    transition: background var(--transition-normal);
+  }
+
+  .feature-card:hover .feature-icon {
+    background: rgba(124, 58, 237, 0.18);
+  }
+
+  .feature-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .feature-desc {
+    font-size: 0.92rem;
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .feature-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--color-accent-light);
+    transition: gap var(--transition-fast);
+  }
+
+  .feature-card:hover .feature-link {
+    gap: 0.7rem;
+  }
+
+  /* 响应式 */
+  @media (max-width: 900px) {
+    .features-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

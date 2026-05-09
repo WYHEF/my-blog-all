@@ -1,0 +1,211 @@
+---
+import { getCollection } from 'astro:content';
+import { SITE_CONFIG } from '@/config';
+import type { Category } from '@/config';
+
+interface Props {
+  currentSlug?: string;
+  currentCategory?: string;
+}
+
+const { currentSlug, currentCategory } = Astro.props;
+
+// 获取所有文章
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// 根据当前上下文决定显示哪些文章
+let sidebarPosts = [] as typeof sortedPosts;
+let sidebarTitle = '';
+let sidebarKicker = '';
+
+if (currentCategory) {
+  sidebarPosts = sortedPosts.filter((post) => post.data.category === currentCategory);
+  sidebarTitle = SITE_CONFIG.categories[currentCategory as Category]?.displayName || '文章列表';
+  sidebarKicker = currentCategory.toUpperCase();
+} else {
+  sidebarPosts = sortedPosts.slice(0, 15);
+  sidebarTitle = '最新文章';
+  sidebarKicker = 'LATEST';
+}
+---
+
+<aside class="left-sidebar">
+  <div class="sidebar-inner">
+    <header class="sidebar-section-head">
+      <span class="sidebar-kicker">[ {sidebarKicker} ]</span>
+      <h3 class="sidebar-title">{sidebarTitle}</h3>
+    </header>
+
+    <ul class="article-list">
+      {sidebarPosts.map((post) => (
+        <li>
+          <a
+            href={`/blog/${post.slug}`}
+            class:list={['article-link', { active: currentSlug === post.slug }]}
+          >
+            <span class="article-link-bar" aria-hidden="true"></span>
+            <span class="article-link-text">{post.data.title}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    {!currentCategory && (
+      <div class="more-link">
+        <a href="/category/tech">
+          查看更多
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14"></path>
+            <path d="m12 5 7 7-7 7"></path>
+          </svg>
+        </a>
+      </div>
+    )}
+  </div>
+</aside>
+
+<style>
+  .left-sidebar {
+    width: var(--sidebar-width);
+    position: fixed;
+    top: var(--header-height);
+    bottom: 0;
+    left: 0;
+    overflow-y: auto;
+    background-color: var(--color-bg);
+    border-right: 1px solid var(--color-border);
+    padding: var(--spacing-lg) 0;
+    z-index: 900;
+  }
+
+  .left-sidebar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .left-sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-radius: 2px;
+  }
+
+  .sidebar-inner {
+    padding: 0 var(--spacing-md);
+  }
+
+  /* ---------- 章节头 ---------- */
+  .sidebar-section-head {
+    margin-bottom: var(--spacing-md);
+    padding-left: 0.6rem;
+  }
+
+  .sidebar-kicker {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.18em;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+  }
+
+  .sidebar-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--color-text);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  /* ---------- 文章列表 ---------- */
+  .article-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .article-list li {
+    margin-bottom: 1px;
+  }
+
+  .article-link {
+    display: flex;
+    align-items: stretch;
+    gap: 0.6rem;
+    padding: 0.45rem 0.6rem 0.45rem 0;
+    font-size: 0.88rem;
+    color: var(--color-text-tertiary);
+    text-decoration: none;
+    border: none;
+    line-height: 1.45;
+    border-radius: 0;
+    transition: color var(--duration-fast) var(--ease-smooth),
+                background-color var(--duration-fast) var(--ease-smooth);
+  }
+
+  .article-link-bar {
+    width: 2px;
+    background-color: transparent;
+    border-radius: 1px;
+    flex-shrink: 0;
+    transition: background-color var(--duration-fast) var(--ease-smooth);
+  }
+
+  .article-link-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .article-link:hover {
+    color: var(--color-text);
+    background-color: rgba(255, 255, 255, 0.03);
+  }
+
+  .article-link:hover .article-link-bar {
+    background-color: var(--color-border-strong);
+  }
+
+  .article-link.active {
+    color: var(--color-text);
+    background-color: rgba(255, 255, 255, 0.05);
+    font-weight: 500;
+  }
+
+  .article-link.active .article-link-bar {
+    background-color: var(--color-text);
+  }
+
+  /* ---------- 更多链接 ---------- */
+  .more-link {
+    margin-top: var(--spacing-md);
+    padding-left: 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .more-link a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--color-text-tertiary);
+    border: none;
+    transition: color var(--duration-fast) var(--ease-smooth),
+                gap var(--duration-fast) var(--ease-smooth);
+  }
+
+  .more-link a:hover {
+    color: var(--color-text);
+    gap: 0.6rem;
+  }
+
+  @media (max-width: 1024px) {
+    .left-sidebar {
+      display: none;
+    }
+  }
+</style>

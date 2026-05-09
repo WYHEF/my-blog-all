@@ -1,0 +1,76 @@
+<div class="font-resizer">
+  <button id="decrease-font" class="resizer-btn" aria-label="减小字号" title="减小字号">A-</button>
+  <span class="separator">/</span>
+  <button id="increase-font" class="resizer-btn" aria-label="增大字号" title="加大字号">A+</button>
+</div>
+
+<style>
+  .font-resizer {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-family: var(--font-mono);
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+    border-right: 1px solid var(--color-border); /* 添加右侧分割线 */
+    padding-right: 0.75rem;
+    margin-right: 0.25rem;
+  }
+
+  .resizer-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-weight: 500;
+    padding: 0.2rem 0.3rem;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+    line-height: 1;
+  }
+
+  .resizer-btn:hover {
+    color: var(--color-text);
+    background-color: var(--color-bg-secondary);
+  }
+
+  .separator {
+    opacity: 0.3;
+    font-size: 0.8em;
+  }
+</style>
+
+<script is:inline>
+  const html = document.documentElement;
+  const increaseBtn = document.getElementById('increase-font');
+  const decreaseBtn = document.getElementById('decrease-font');
+  
+  // 默认文章字号
+  let currentSize = 17;
+  const minSize = 14;
+  const maxSize = 24;
+
+  // 从本地存储读取 (使用新的 key 以免冲突)
+  if (localStorage.getItem('articleFontSize')) {
+    currentSize = parseInt(localStorage.getItem('articleFontSize'));
+    html.style.setProperty('--article-font-size', `${currentSize}px`);
+  }
+
+  function updateFontSize(size) {
+    currentSize = size;
+    html.style.setProperty('--article-font-size', `${currentSize}px`);
+    localStorage.setItem('articleFontSize', currentSize);
+  }
+
+  increaseBtn?.addEventListener('click', () => {
+    if (currentSize < maxSize) {
+      updateFontSize(currentSize + 1);
+    }
+  });
+
+  decreaseBtn?.addEventListener('click', () => {
+    if (currentSize > minSize) {
+      updateFontSize(currentSize - 1);
+    }
+  });
+</script>

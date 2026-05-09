@@ -1,0 +1,126 @@
+---
+// 可复用光晕球 - 用于 Hero / Project / Footer 等地方
+// 外层 div 负责 parallax (translate),内层 div 负责 breathe (scale/opacity),避免 transform 冲突
+interface Props {
+  size?: string;          // 例: '600px' / '40vw'
+  color?: string;          // 例: 'rgba(120,170,255,0.5)' 或 'var(--glow-blue)'
+  blur?: string;           // 例: '80px'
+  opacity?: number;        // 0~1
+  top?: string;
+  right?: string;
+  bottom?: string;
+  left?: string;
+  parallax?: boolean;      // 鼠标 parallax 跟随
+  parallaxStrength?: number; // 默认 0.025
+  breathe?: boolean;       // 呼吸动画
+  class?: string;
+}
+
+const {
+  size = '600px',
+  color = 'var(--glow-blue)',
+  blur = '80px',
+  opacity = 0.6,
+  top,
+  right,
+  bottom,
+  left,
+  parallax = false,
+  parallaxStrength = 0.025,
+  breathe = true,
+  class: className = '',
+} = Astro.props;
+
+const wrapStyle: Record<string, string> = {};
+if (top !== undefined) wrapStyle.top = top;
+if (right !== undefined) wrapStyle.right = right;
+if (bottom !== undefined) wrapStyle.bottom = bottom;
+if (left !== undefined) wrapStyle.left = left;
+
+const orbStyle: Record<string, string> = {
+  '--orb-size': size,
+  '--orb-color': color,
+  '--orb-blur': blur,
+  '--orb-opacity': String(opacity),
+};
+
+const wrapStyleStr = Object.entries(wrapStyle).map(([k, v]) => `${k}:${v}`).join(';');
+const orbStyleStr = Object.entries(orbStyle).map(([k, v]) => `${k}:${v}`).join(';');
+---
+
+<div
+  class:list={['glow-orb-wrap', className, { 'is-parallax': parallax }]}
+  style={wrapStyleStr}
+  data-parallax-strength={parallax ? parallaxStrength : null}
+  aria-hidden="true"
+>
+  <div class:list={['glow-orb', { 'is-breathe': breathe }]} style={orbStyleStr}></div>
+</div>
+
+<style>
+  .glow-orb-wrap {
+    position: absolute;
+    pointer-events: none;
+    will-change: transform;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .glow-orb {
+    width: var(--orb-size);
+    height: var(--orb-size);
+    background: radial-gradient(circle at center, var(--orb-color), transparent 65%);
+    filter: blur(var(--orb-blur));
+    opacity: var(--orb-opacity);
+    border-radius: 50%;
+    will-change: transform, opacity;
+  }
+
+  .glow-orb.is-breathe {
+    animation: orb-breathe 8s ease-in-out infinite;
+  }
+
+  @keyframes orb-breathe {
+    0%, 100% {
+      transform: scale(1);
+      opacity: calc(var(--orb-opacity) * 0.8);
+    }
+    50% {
+      transform: scale(1.08);
+      opacity: var(--orb-opacity);
+    }
+  }
+</style>
+
+<script is:inline>
+  // 全局鼠标 parallax(只绑一次)
+  (function () {
+    if (window.__orbParallaxBound) return;
+    window.__orbParallaxBound = true;
+
+    let raf = 0;
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+
+    const apply = () => {
+      raf = 0;
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      const dxBase = mouseX - cx;
+      const dyBase = mouseY - cy;
+      document.querySelectorAll('.glow-orb-wrap.is-parallax').forEach((el) => {
+        const strength = parseFloat(el.dataset.parallaxStrength || '0.025');
+        el.style.transform = `translate3d(${dxBase * strength}px, ${dyBase * strength}px, 0)`;
+      });
+    };
+
+    window.addEventListener(
+      'mousemove',
+      (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        if (!raf) raf = requestAnimationFrame(apply);
+      },
+      { passive: true }
+    );
+  })();
+</script>

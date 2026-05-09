@@ -1,0 +1,210 @@
+---
+import { SITE_CONFIG } from '@/config';
+
+const currentYear = new Date().getFullYear();
+
+// Footer 5 栏数据
+const footerColumns = [
+  {
+    title: 'CONNECT',
+    links: [
+      { label: 'GitHub', href: SITE_CONFIG.github, external: true },
+      { label: 'Bilibili', href: SITE_CONFIG.bilibili, external: true },
+      { label: 'Email', href: `mailto:${SITE_CONFIG.email}`, external: false },
+      { label: 'WeChat', href: '/about#wechat', external: false },
+    ],
+  },
+  {
+    title: 'BROWSE',
+    links: [
+      { label: 'Home', href: '/', external: false },
+      { label: 'Tech', href: '/category/tech', external: false },
+      { label: 'Notes', href: '/category/notes', external: false },
+      { label: 'Travel', href: '/category/travel', external: false },
+    ],
+  },
+  {
+    title: 'PROJECTS',
+    links: [
+      { label: 'All Projects', href: '/projects', external: false },
+      { label: 'Goals 星煜凡程', href: 'https://goals.wyhef.cloud', external: true },
+      { label: 'KMP Visualizer', href: 'https://kmp.wyhef.cloud', external: true },
+    ],
+  },
+  {
+    title: 'RESOURCES',
+    links: [
+      { label: 'RSS Feed', href: '/rss.xml', external: false },
+      { label: 'Tags', href: '/tags', external: false },
+      { label: 'Videos', href: '/videos', external: false },
+    ],
+  },
+  {
+    title: 'COMPANY',
+    links: [
+      { label: 'About', href: '/about', external: false },
+      { label: 'Contact', href: `mailto:${SITE_CONFIG.email}`, external: false },
+    ],
+  },
+];
+---
+
+<footer class="footer">
+  <div class="footer-glow" aria-hidden="true"></div>
+
+  <div class="footer-inner">
+    <div class="footer-cols">
+      {footerColumns.map((col) => (
+        <div class="footer-col">
+          <h4 class="footer-col-title">{col.title}</h4>
+          <ul class="footer-link-list">
+            {col.links.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  target={link.external ? '_blank' : undefined}
+                  rel={link.external ? 'noopener noreferrer' : undefined}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-meta">
+        <span class="footer-author">© {currentYear} {SITE_CONFIG.author} (WYHEF)</span>
+        <span class="footer-sep">·</span>
+        <span class="footer-tagline">{SITE_CONFIG.description}</span>
+      </div>
+      <div class="footer-stamp">
+        <span>Built with Astro</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    position: relative;
+    margin-top: var(--section-pad);
+    padding: var(--spacing-xl) 0 var(--spacing-lg);
+    border-top: 1px solid var(--color-border);
+    background-color: var(--color-bg);
+    overflow: hidden;
+  }
+
+  /* 底部温暖光晕,模拟 x.ai 的 footer 暖光 */
+  .footer-glow {
+    position: absolute;
+    left: 50%;
+    bottom: -200px;
+    width: 800px;
+    height: 400px;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at center, var(--glow-warm), transparent 70%);
+    filter: blur(60px);
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  .footer-inner {
+    position: relative;
+    width: 100%;
+    padding: 0 var(--spacing-lg);
+    z-index: 1;
+  }
+
+  /* ---------- 五栏 ---------- */
+  .footer-cols {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--spacing-lg);
+    padding-bottom: var(--spacing-xl);
+  }
+
+  .footer-col-title {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--color-text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .footer-link-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .footer-link-list a {
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+    text-decoration: none;
+    border: none;
+    transition: color var(--duration-fast) var(--ease-smooth);
+  }
+
+  .footer-link-list a:hover {
+    color: var(--color-text);
+  }
+
+  /* ---------- 底部行 ---------- */
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--color-border);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.05em;
+  }
+
+  .footer-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .footer-sep {
+    opacity: 0.5;
+  }
+
+  /* ---------- 响应式 ---------- */
+  @media (max-width: 1024px) {
+    .footer-cols {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-md);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .footer-cols {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .footer-bottom {
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      align-items: flex-start;
+      text-align: left;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .footer-cols {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

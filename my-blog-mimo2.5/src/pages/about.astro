@@ -1,0 +1,356 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { SITE_CONFIG } from '@/config';
+
+const techStack = [
+  { name: 'Python', percent: 100, color: '#3572A5', desc: '主要开发语言，用于脚本与自动化' },
+  { name: 'Java', percent: 80, color: '#b07219', desc: '熟悉 Java SE 及面向对象设计' },
+  { name: 'JavaScript', percent: 70, color: '#f1e05a', desc: '能够进行基本的前端开发' },
+  { name: 'Vue', percent: 70, color: '#41b883', desc: '熟悉 Vue 生态系统' },
+  { name: 'SpringBoot', percent: 60, color: '#6db33f', desc: '具备后端服务开发能力' },
+  { name: 'HTML/CSS', percent: 60, color: '#e34c26', desc: '页面布局与样式调整' },
+  { name: 'C++', percent: 40, color: '#f34b7d', desc: '算法学习与底层逻辑探索' },
+];
+---
+
+<BaseLayout
+  title={`关于 - ${SITE_CONFIG.title}`}
+  description={`关于 ${SITE_CONFIG.author}`}
+>
+  <div class="page-container">
+    <div class="about-layout">
+      <!-- 左侧 Profile -->
+      <aside class="profile-sidebar">
+        <div class="avatar-wrapper">
+          <img src={SITE_CONFIG.avatar} alt={SITE_CONFIG.author} class="avatar">
+        </div>
+        <h1 class="profile-name">{SITE_CONFIG.author}</h1>
+        <p class="profile-handle">WYHEF</p>
+        <p class="profile-bio">记录技术、学习与生活。</p>
+
+        <div class="social-links">
+          <a href={SITE_CONFIG.github} target="_blank" rel="noopener noreferrer" class="social-link">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+            GitHub
+          </a>
+          <a href={SITE_CONFIG.bilibili} target="_blank" rel="noopener noreferrer" class="social-link">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="7" width="20" height="13" rx="2" ry="2"></rect>
+              <path d="M17 2l-5 5-5-5"></path>
+            </svg>
+            Bilibili
+          </a>
+          <a href={`mailto:${SITE_CONFIG.email}`} class="social-link">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            {SITE_CONFIG.email}
+          </a>
+          <div class="social-link wechat-trigger">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M8.5 13.5l-1.5 2.5v-2.5h-1c-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5 4.5 2 4.5 4.5c0 1-.5 2-1.5 3z"></path>
+              <path d="M17.5 12c-2.5 0-4.5 2-4.5 4.5s2 4.5 4.5 4.5c1 0 2-.5 2.5-1v1h2.5l-1.5-2.5c1-1 1.5-2 1.5-3 0-2.5-2-4.5-4.5-4.5z"></path>
+            </svg>
+            公众号：{SITE_CONFIG.wechat}
+            <div class="qr-popup">
+              <img src="/qrcode.jpg" alt="微信公众号二维码" class="qr-img">
+              <span class="qr-tip">扫码关注</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 右侧 Content -->
+      <article class="about-content">
+        <section class="intro-section">
+          <h2>你好，我是吴煜凡。</h2>
+          <p>
+            欢迎来到我的个人博客。我是一名热衷于计算机技术的开发者和学习者，ID 是 <strong>WYHEF</strong>（也就是五氧化二钒的缩写）。
+          </p>
+          <p>
+            我热衷于探索代码背后的逻辑，同时也享受构建工具来解决实际问题的过程。目前，我主要关注后端开发、脚本自动化以及 Web 全栈技术。
+          </p>
+        </section>
+
+        <section>
+          <h3>关于本站</h3>
+          <p>
+            建立这个博客的初衷是为了构建一个属于自己的知识库。在这个信息碎片化的时代，我希望通过长文写作来沉淀思考，记录学习过程中的灵光一现。
+          </p>
+          <p>在这里，你主要会看到以下内容：</p>
+          <ul class="content-list">
+            <li><strong>技术笔记</strong>：关于 Python, Java, SpringBoot 等技术的学习心得与踩坑记录。</li>
+            <li><strong>项目实战</strong>：个人项目的开发过程复盘与技术总结。</li>
+            <li><strong>算法与逻辑</strong>：在 C++ 算法学习过程中的思考。</li>
+            <li><strong>生活随笔</strong>：关于旅行、阅读和生活的些许感悟。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>技术栈</h3>
+          <div class="tech-stack">
+            {techStack.map(tech => (
+              <div class="tech-item">
+                <div class="tech-header">
+                  <span class="tech-name">{tech.name}</span>
+                  <span class="tech-desc">{tech.desc}</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style={`width: ${tech.percent}%; background-color: ${tech.color};`}></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <h3>联系我</h3>
+          <p>
+            如果你对我的文章感兴趣，或者有技术问题想要交流，欢迎通过上方的社交链接联系我。
+            你也可以关注我的微信公众号 <strong>"五氧化二钒不是废钒"</strong>，获取更多动态。
+          </p>
+        </section>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: var(--spacing-xl) var(--spacing-lg);
+  }
+
+  .about-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: var(--spacing-xl);
+    align-items: start;
+  }
+
+  .profile-sidebar {
+    position: sticky;
+    top: 100px;
+  }
+
+  .avatar-wrapper {
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-md);
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+  }
+
+  .avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .profile-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0;
+    line-height: 1.2;
+  }
+
+  .profile-handle {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .profile-bio {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: var(--spacing-lg);
+    color: var(--color-text-secondary);
+  }
+
+  .social-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--spacing-md);
+  }
+
+  .social-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    cursor: pointer;
+    position: relative;
+    border-bottom: none;
+  }
+
+  .social-link:hover {
+    color: var(--color-text);
+    border-bottom: none;
+  }
+
+  .wechat-trigger:hover .qr-popup {
+    display: flex;
+  }
+
+  .qr-popup {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    padding: 10px;
+    border-radius: var(--radius-md);
+    flex-direction: column;
+    align-items: center;
+    z-index: 100;
+    margin-bottom: 10px;
+    width: 140px;
+  }
+
+  .qr-popup::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -6px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: var(--color-bg-card) transparent transparent transparent;
+  }
+
+  .qr-img {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    margin-bottom: 5px;
+    background-color: #f0f0f0;
+    border-radius: var(--radius-sm);
+  }
+
+  .qr-tip {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  .about-content {
+    font-size: 1.05rem;
+    line-height: 1.8;
+  }
+
+  .about-content h2 {
+    font-size: 1.75rem;
+    margin-bottom: var(--spacing-md);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .about-content h3 {
+    font-size: 1.25rem;
+    margin-top: var(--spacing-xl);
+    margin-bottom: var(--spacing-md);
+    font-weight: 600;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .about-content p {
+    margin-bottom: 1.5em;
+    color: var(--color-text-secondary);
+  }
+
+  .content-list {
+    list-style-type: none;
+    margin: 0 0 1.5em 0;
+    padding: 0;
+  }
+
+  .content-list li {
+    margin-bottom: 0.75rem;
+    padding-left: 1.2rem;
+    position: relative;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+  }
+
+  .content-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--color-primary);
+    font-weight: bold;
+  }
+
+  .tech-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    margin: var(--spacing-md) 0 var(--spacing-lg);
+  }
+
+  .tech-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .tech-name {
+    font-weight: 600;
+    font-family: var(--font-mono);
+    color: var(--color-text);
+  }
+
+  .tech-desc {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 4px;
+    background-color: var(--color-bg-card);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.8s ease-out;
+  }
+
+  @media (max-width: 768px) {
+    .about-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .profile-sidebar {
+      position: static;
+      margin-bottom: var(--spacing-xl);
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: var(--spacing-lg);
+    }
+
+    .avatar-wrapper {
+      width: 120px;
+    }
+
+    .page-container {
+      padding: var(--spacing-lg) var(--spacing-md);
+    }
+  }
+</style>

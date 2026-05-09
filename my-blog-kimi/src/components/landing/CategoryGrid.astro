@@ -1,0 +1,311 @@
+---
+// 三分类卡片栅格 - 对应 x.ai 中部 "AI for all humanity" 三栏
+// 三个入口: /category/tech, /category/notes, /category/travel
+import GlowOrb from '@components/landing/GlowOrb.astro';
+
+interface CategoryCard {
+  slug: 'tech' | 'notes' | 'travel';
+  title: string;        // 中文小标
+  english: string;      // 英文大标 (角落小字)
+  caption: string;      // 一句话副标
+  description: string;  // 描述
+  cta: string;
+  glyph: 'code' | 'note' | 'compass';
+}
+
+const cards: CategoryCard[] = [
+  {
+    slug: 'tech',
+    title: '技术',
+    english: 'TECH',
+    caption: 'Engineering & deep dives.',
+    description: '系统、网络、AI、Python、安全 —— 把踩过的坑沉淀成可复用的方案。',
+    cta: 'EXPLORE',
+    glyph: 'code',
+  },
+  {
+    slug: 'notes',
+    title: '笔记',
+    english: 'NOTES',
+    caption: 'Studies & second-brain.',
+    description: '学习路上的摘录与思考,既是给自己看的复习材料,也是给世界的留言板。',
+    cta: 'EXPLORE',
+    glyph: 'note',
+  },
+  {
+    slug: 'travel',
+    title: '游记',
+    english: 'TRAVEL',
+    caption: 'Photography & life moments.',
+    description: '镜头里的山城、夏天、晨雾。在路上的人,和那些短暂被照亮的瞬间。',
+    cta: 'EXPLORE',
+    glyph: 'compass',
+  },
+];
+---
+
+<section class="category-section" id="sections">
+  <!-- 远景背景柔光 -->
+  <GlowOrb
+    top="-200px"
+    left="50%"
+    size="640px"
+    color="var(--glow-blue)"
+    blur="160px"
+    opacity={0.18}
+    breathe={false}
+  />
+
+  <header class="category-header" data-reveal>
+    <span class="eyebrow">SECTIONS</span>
+    <h2 class="category-title">Writing across categories.</h2>
+    <p class="category-lede">
+      博客内容分为三个分类入口。点开任意一张卡片进入对应的归档页。
+    </p>
+  </header>
+
+  <div class="category-grid">
+    {cards.map((card, index) => (
+      <a
+        href={`/category/${card.slug}`}
+        class={`category-card category-card--${card.slug}`}
+        data-reveal
+        data-reveal-delay={String(index + 1)}
+      >
+        <span class="category-card-eyebrow">{card.english}</span>
+
+        <div class="category-card-glyph" aria-hidden="true">
+          {card.glyph === 'code' && (
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 18 6 32l16 14"></path>
+              <path d="M42 18l16 14-16 14"></path>
+              <path d="M36 12 28 52" opacity="0.6"></path>
+            </svg>
+          )}
+          {card.glyph === 'note' && (
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="14" y="10" width="36" height="44" rx="3"></rect>
+              <path d="M22 22h20" opacity="0.6"></path>
+              <path d="M22 30h20" opacity="0.6"></path>
+              <path d="M22 38h12" opacity="0.6"></path>
+              <path d="M44 4l8 8-22 22-10 2 2-10 22-22z" opacity="0.85"></path>
+            </svg>
+          )}
+          {card.glyph === 'compass' && (
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="32" cy="32" r="22"></circle>
+              <circle cx="32" cy="32" r="3" fill="currentColor"></circle>
+              <path d="M32 14v6" opacity="0.6"></path>
+              <path d="M32 44v6" opacity="0.6"></path>
+              <path d="M14 32h6" opacity="0.6"></path>
+              <path d="M44 32h6" opacity="0.6"></path>
+              <path d="m24 24 6 14 8-6-2-12-12 4z" fill="currentColor" fill-opacity="0.18"></path>
+            </svg>
+          )}
+        </div>
+
+        <div class="category-card-body">
+          <h3 class="category-card-title">{card.title}</h3>
+          <p class="category-card-caption">{card.caption}</p>
+          <p class="category-card-desc">{card.description}</p>
+        </div>
+
+        <span class="category-card-cta">
+          {card.cta}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14"></path>
+            <path d="m12 5 7 7-7 7"></path>
+          </svg>
+        </span>
+      </a>
+    ))}
+  </div>
+</section>
+
+<style>
+  .category-section {
+    position: relative;
+    padding: var(--section-pad) var(--spacing-lg);
+    max-width: 1280px;
+    margin: 0 auto;
+    isolation: isolate;
+  }
+
+  .category-header {
+    max-width: 720px;
+    margin: 0 auto var(--spacing-xl);
+    text-align: center;
+  }
+
+  .category-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4.5vw, 3.6rem);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--color-text);
+    margin: 0 0 var(--spacing-sm);
+  }
+
+  .category-lede {
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+  }
+
+  /* ---------- 卡片 ---------- */
+  .category-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 360px;
+    padding: 1.6rem 1.5rem 1.4rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.025) 0%, rgba(255, 255, 255, 0) 60%);
+    color: var(--color-text);
+    text-decoration: none;
+    overflow: hidden;
+    transition: border-color var(--duration-base) var(--ease-smooth),
+                background-color var(--duration-base) var(--ease-smooth),
+                transform var(--duration-base) var(--ease-smooth),
+                box-shadow var(--duration-base) var(--ease-smooth);
+    isolation: isolate;
+  }
+
+  /* 各卡片角落隐约的色光 */
+  .category-card::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -30%;
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: -1;
+    transition: opacity var(--duration-base) var(--ease-smooth),
+                transform var(--duration-slow) var(--ease-smooth);
+  }
+
+  .category-card--tech::before {
+    background: radial-gradient(circle, rgba(120, 170, 255, 0.6), transparent 60%);
+  }
+
+  .category-card--notes::before {
+    background: radial-gradient(circle, rgba(180, 140, 255, 0.55), transparent 60%);
+  }
+
+  .category-card--travel::before {
+    background: radial-gradient(circle, rgba(255, 160, 110, 0.5), transparent 60%);
+  }
+
+  .category-card:hover {
+    border-color: var(--color-border-strong);
+    transform: translateY(-3px);
+    background-color: rgba(255, 255, 255, 0.04);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08),
+                0 30px 80px -20px rgba(0, 0, 0, 0.6),
+                0 0 60px -10px rgba(120, 170, 255, 0.15);
+  }
+
+  .category-card:hover::before {
+    opacity: 0.55;
+    transform: translate(-12%, 10%) scale(1.05);
+  }
+
+  .category-card-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .category-card-glyph {
+    width: 88px;
+    height: 88px;
+    color: var(--color-text);
+    opacity: 0.85;
+    margin: var(--spacing-md) 0 var(--spacing-md);
+  }
+
+  .category-card-glyph svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .category-card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .category-card-title {
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: var(--color-text);
+  }
+
+  .category-card-caption {
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .category-card-desc {
+    color: var(--color-text-tertiary);
+    font-size: 0.85rem;
+    line-height: 1.6;
+    margin: 0.4rem 0 0;
+  }
+
+  .category-card-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    align-self: flex-start;
+    padding: 0.4rem 0.85rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-border-strong);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    color: var(--color-text);
+    background: rgba(255, 255, 255, 0.04);
+    transition: background-color var(--duration-fast) var(--ease-smooth),
+                gap var(--duration-fast) var(--ease-smooth);
+  }
+
+  .category-card:hover .category-card-cta {
+    background: var(--color-text);
+    color: var(--color-bg);
+    gap: 0.7rem;
+  }
+
+  /* ---------- 响应式 ---------- */
+  @media (max-width: 960px) {
+    .category-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .category-card {
+      min-height: 280px;
+    }
+  }
+</style>

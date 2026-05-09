@@ -1,0 +1,154 @@
+---
+interface Props {
+  prev?: {
+    title: string;
+    url: string;
+  };
+  next?: {
+    title: string;
+    url: string;
+  };
+}
+
+const { prev, next } = Astro.props;
+---
+
+{(prev || next) && (
+  <nav class="pagination">
+    {prev ? (
+      <a href={prev.url} class="pagination-link prev">
+        <span class="arrow" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5"></path>
+            <path d="m12 19-7-7 7-7"></path>
+          </svg>
+        </span>
+        <div class="link-content">
+          <span class="label">PREVIOUS</span>
+          <span class="title">{prev.title}</span>
+        </div>
+      </a>
+    ) : <span></span>}
+
+    {next ? (
+      <a href={next.url} class="pagination-link next">
+        <div class="link-content">
+          <span class="label">NEXT</span>
+          <span class="title">{next.title}</span>
+        </div>
+        <span class="arrow" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14"></path>
+            <path d="m12 5 7 7-7 7"></path>
+          </svg>
+        </span>
+      </a>
+    ) : <span></span>}
+  </nav>
+)}
+
+<style>
+  .pagination {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-xl);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .pagination-link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    background-color: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--color-text);
+    transition: border-color var(--duration-fast) var(--ease-smooth),
+                background-color var(--duration-fast) var(--ease-smooth),
+                transform var(--duration-fast) var(--ease-smooth),
+                box-shadow var(--duration-base) var(--ease-smooth);
+  }
+
+  .pagination-link:hover {
+    border-color: var(--color-border-strong);
+    background-color: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06),
+                0 20px 60px -20px rgba(120, 170, 255, 0.18);
+  }
+
+  .pagination-link.next {
+    grid-column: 2;
+    text-align: right;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .arrow {
+    color: var(--color-text-secondary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: color var(--duration-fast) var(--ease-smooth),
+                transform var(--duration-fast) var(--ease-smooth);
+  }
+
+  .pagination-link:hover .arrow {
+    color: var(--color-text);
+  }
+
+  .pagination-link.prev:hover .arrow {
+    transform: translateX(-3px);
+  }
+
+  .pagination-link.next:hover .arrow {
+    transform: translateX(3px);
+  }
+
+  .link-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+  }
+
+  .title {
+    font-family: var(--font-display);
+    color: var(--color-text);
+    font-weight: 500;
+    font-size: 0.95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 768px) {
+    .pagination {
+      grid-template-columns: 1fr;
+    }
+
+    .pagination-link.next {
+      grid-column: 1;
+      text-align: left;
+      flex-direction: row;
+      justify-content: flex-start;
+    }
+
+    .pagination-link.next .link-content {
+      order: 2;
+    }
+  }
+</style>

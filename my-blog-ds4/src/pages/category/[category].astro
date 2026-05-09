@@ -1,0 +1,77 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import PostCard from '@components/PostCard.astro';
+import { getPostsByCategory } from '@/utils/post';
+import { SITE_CONFIG, type Category } from '@/config';
+
+export async function getStaticPaths() {
+  const categories = Object.keys(SITE_CONFIG.categories) as Category[];
+  
+  return Promise.all(
+    categories.map(async (category) => {
+      const posts = await getPostsByCategory(category);
+      return {
+        params: { category },
+        props: { posts, category }
+      };
+    })
+  );
+}
+
+const { posts, category } = Astro.props;
+const categoryConfig = SITE_CONFIG.categories[category as Category];
+---
+
+<BaseLayout
+  title={`${categoryConfig.displayName} - ${SITE_CONFIG.title}`}
+  description={categoryConfig.description}
+  currentCategory={category}
+>
+  <div class="container">
+    <header class="category-header">
+      <h1 class="category-title">{categoryConfig.displayName}</h1>
+      <p class="category-description">{categoryConfig.description}</p>
+    </header>
+    
+    <div class="posts-list">
+      {posts.map((post) => (
+        <PostCard post={post} />
+      ))}
+    </div>
+    
+    {posts.length === 0 && (
+      <div class="empty-state">
+        <p>No posts found.</p>
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .category-header {
+    padding: var(--spacing-xl) 0;
+    margin-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  .category-title {
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .category-description {
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+  }
+  
+  .posts-list {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .empty-state {
+    padding: var(--spacing-xl) 0;
+    color: var(--color-text-secondary);
+  }
+</style>
+

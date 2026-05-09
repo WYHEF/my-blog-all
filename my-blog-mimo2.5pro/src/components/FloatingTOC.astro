@@ -1,0 +1,220 @@
+---
+interface Heading {
+  depth: number;
+  text: string;
+  slug: string;
+}
+
+interface Props {
+  headings: Heading[];
+}
+
+const { headings } = Astro.props;
+---
+
+{headings.length > 0 && (
+  <nav class="floating-toc" aria-label="文章目录">
+    <button class="toc-toggle" aria-label="展开目录" aria-expanded="false">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+      <span class="toc-toggle-text">目录</span>
+    </button>
+
+    <div class="toc-panel">
+      <h3 class="toc-title">ON THIS PAGE</h3>
+      <ul class="toc-list">
+        {headings.filter(h => h.depth >= 2 && h.depth <= 4).map((heading) => (
+          <li class={`toc-item toc-level-${heading.depth}`}>
+            <a href={`#${heading.slug}`}>{heading.text}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </nav>
+)}
+
+<style>
+  .floating-toc {
+    position: sticky;
+    top: calc(var(--header-height) + 2rem);
+    max-height: calc(100vh - var(--header-height) - 4rem);
+    overflow-y: auto;
+    padding: var(--spacing-md);
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+
+  .toc-toggle {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: color var(--transition-fast) ease, border-color var(--transition-fast) ease;
+  }
+
+  .toc-toggle:hover {
+    color: var(--color-text);
+    border-color: var(--color-border-hover);
+  }
+
+  .toc-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .toc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-left: 1px solid var(--color-border);
+  }
+
+  .toc-item {
+    margin: 0;
+  }
+
+  .toc-item a {
+    display: block;
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    line-height: 1.5;
+    padding: 0.25rem 0.75rem;
+    text-decoration: none;
+    transition: all var(--transition-fast) ease;
+    border-left: 2px solid transparent;
+    margin-left: -1px;
+  }
+
+  .toc-item a:hover {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+
+  .toc-level-3 a {
+    padding-left: 1.5rem;
+  }
+
+  .toc-level-4 a {
+    padding-left: 2.25rem;
+  }
+
+  /* 移动端: 折叠式 */
+  @media (max-width: 1024px) {
+    .floating-toc {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      top: auto;
+      max-height: 60vh;
+      width: 280px;
+      z-index: 900;
+      transform: translateY(calc(100% + 3rem));
+      opacity: 0;
+      pointer-events: none;
+      transition: transform var(--transition-normal) var(--ease-out),
+                  opacity var(--transition-normal) ease;
+    }
+
+    .floating-toc.open {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .toc-toggle {
+      display: flex;
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      z-index: 901;
+    }
+  }
+
+  /* 桌面端隐藏 toggle 按钮 */
+  @media (min-width: 1025px) {
+    .toc-toggle {
+      display: none;
+    }
+  }
+</style>
+
+<style is:global>
+  .toc-list a.active {
+    color: var(--color-primary);
+    font-weight: 600;
+    border-left-color: var(--color-primary);
+  }
+</style>
+
+<script>
+  import { register, type AnimationModule } from '@/scripts/view-transition-manager';
+
+  const tocModule: AnimationModule = {
+    observer: null as IntersectionObserver | null,
+
+    init() {
+      // IntersectionObserver 活跃标题追踪
+      const headings = document.querySelectorAll('article h2, article h3, article h4');
+      if (headings.length === 0) return;
+
+      this.observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const id = entry.target.getAttribute('id');
+            const tocLink = document.querySelector(`.toc-list a[href="#${id}"]`);
+            if (entry.isIntersecting) {
+              document.querySelectorAll('.toc-list a').forEach((link) => {
+                link.classList.remove('active');
+              });
+              tocLink?.classList.add('active');
+            }
+          });
+        },
+        { rootMargin: '-10% 0px -80% 0px' }
+      );
+
+      headings.forEach((heading) => this.observer!.observe(heading));
+
+      // 移动端 toggle 按钮
+      const toggle = document.querySelector('.toc-toggle');
+      const panel = document.querySelector('.floating-toc');
+      toggle?.addEventListener('click', () => {
+        const isOpen = panel?.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', String(isOpen));
+      });
+
+      // 点击目录链接后关闭移动端面板
+      document.querySelectorAll('.toc-list a').forEach((link) => {
+        link.addEventListener('click', () => {
+          panel?.classList.remove('open');
+          toggle?.setAttribute('aria-expanded', 'false');
+        });
+      });
+    },
+
+    destroy() {
+      this.observer?.disconnect();
+      this.observer = null;
+    }
+  };
+
+  register(tocModule);
+</script>

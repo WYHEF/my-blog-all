@@ -1,0 +1,128 @@
+---
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import LeftSidebar from '@components/LeftSidebar.astro';
+import TableOfContents from '@components/TableOfContents.astro'; // 重新引入 TOC
+import '@/styles/global.css';
+import { getSEO, type SEOProps } from '@/utils/seo';
+import type { MarkdownHeading } from 'astro';
+
+interface Props extends SEOProps {
+  class?: string;
+  currentSlug?: string;
+  currentCategory?: string;
+  headings?: MarkdownHeading[]; 
+}
+
+const { 
+  title, 
+  description, 
+  image, 
+  article, 
+  publishedTime, 
+  tags, 
+  class: className,
+  currentSlug,
+  currentCategory,
+  headings 
+} = Astro.props;
+
+const seo = getSEO({ title, description, image, article, publishedTime, tags });
+const hasTOC = headings && headings.length > 0;
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta name="generator" content={Astro.generator}>
+  
+  <title>{seo.title}</title>
+  <meta name="description" content={seo.description}>
+  
+  <meta property="og:type" content={seo.openGraph.type}>
+  <meta property="og:title" content={seo.openGraph.title}>
+  <meta property="og:description" content={seo.openGraph.description}>
+  <meta property="og:image" content={seo.openGraph.image}>
+  
+  <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
+</head>
+<body>
+  <Header />
+  
+  <div class="layout-container">
+    <LeftSidebar currentSlug={currentSlug} currentCategory={currentCategory} />
+    
+    {hasTOC && (
+      <aside class="toc-sidebar">
+        <div class="toc-inner">
+          <TableOfContents headings={headings} />
+        </div>
+      </aside>
+    )}
+    
+    <main class:list={['main-content', { 'with-toc': hasTOC }, className]}>
+      <slot />
+      <Footer />
+    </main>
+  </div>
+</body>
+</html>
+
+<style>
+  .layout-container {
+    display: flex;
+    width: 100%;
+    padding-top: 60px;
+    min-height: 100vh;
+  }
+  
+  /* 中间 TOC 侧边栏 */
+  .toc-sidebar {
+    width: 240px;
+    position: fixed;
+    top: 60px;
+    bottom: 0;
+    left: 280px; /* 紧接在 LeftSidebar 之后 */
+    overflow-y: auto;
+    background-color: var(--color-bg); /* 与背景一致，或微调 */
+    border-right: 1px solid var(--color-border); /* 可选分割线 */
+    z-index: 890;
+  }
+  
+  .toc-inner {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  /* 主内容区域 */
+  .main-content {
+    flex: 1;
+    margin-left: 280px; /* 默认只避开左侧栏 */
+    padding: var(--spacing-xl);
+    min-width: 0;
+  }
+  
+  /* 当存在 TOC 时，增加左边距 */
+  .main-content.with-toc {
+    margin-left: 520px; /* 280px + 240px */
+  }
+  
+  @media (max-width: 1200px) {
+    /* 平板尺寸：隐藏 TOC 栏，或者改为抽屉式（这里先隐藏） */
+    .toc-sidebar {
+      display: none;
+    }
+    .main-content.with-toc {
+      margin-left: 280px;
+    }
+  }
+  
+  @media (max-width: 1024px) {
+    .main-content, .main-content.with-toc {
+      margin-left: 0;
+      padding: var(--spacing-lg) var(--spacing-md);
+    }
+  }
+</style>

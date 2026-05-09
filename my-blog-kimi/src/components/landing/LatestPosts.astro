@@ -1,0 +1,348 @@
+---
+// 首页 "Latest writing" 文章列表
+// 对应 x.ai "Latest news",左侧日期/分类小标 + 大标题 + 描述,右侧渐变占位封面
+import type { Post } from '@/utils/post';
+import { formatDate } from '@/utils/post';
+import { SITE_CONFIG } from '@/config';
+
+interface Props {
+  posts: Post[];
+  limit?: number;
+}
+
+const { posts, limit = 5 } = Astro.props;
+const latestPosts = posts.slice(0, limit);
+
+// 简单 hash → 渐变占位色,根据 slug 决定每篇文章的封面色,稳定可重现
+function gradientFor(slug: string, category: string): string {
+  let h1 = 0;
+  for (let i = 0; i < slug.length; i++) h1 = (h1 * 31 + slug.charCodeAt(i)) | 0;
+  const hue1 = Math.abs(h1) % 360;
+  const hue2 = (hue1 + 60 + (Math.abs(h1) % 60)) % 360;
+
+  const sat = category === 'tech' ? 70 : category === 'travel' ? 60 : 55;
+  const lit = 26;
+
+  return `linear-gradient(135deg, hsl(${hue1}, ${sat}%, ${lit}%) 0%, hsl(${hue2}, ${sat}%, ${lit + 8}%) 100%)`;
+}
+
+// 英文月份缩写,接近 x.ai 风格
+function asEnglishDate(d: Date): string {
+  const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+  return `${months[d.getMonth()]} ${String(d.getDate()).padStart(2, '0')}`;
+}
+---
+
+<section class="latest-section">
+  <header class="latest-header" data-reveal>
+    <div>
+      <span class="eyebrow">BLOG</span>
+      <h2 class="latest-headline">Latest writing.</h2>
+    </div>
+    <a href="/category/tech" class="latest-explore">
+      EXPLORE MORE
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14"></path>
+        <path d="m12 5 7 7-7 7"></path>
+      </svg>
+    </a>
+  </header>
+
+  <ul class="latest-list">
+    {latestPosts.map((post, idx) => {
+      const cat = SITE_CONFIG.categories[post.data.category];
+      return (
+        <li class="latest-item" data-reveal data-reveal-delay={String(Math.min(idx + 1, 4))}>
+          <a href={`/blog/${post.slug}`} class="latest-link">
+            <div class="latest-meta">
+              <span class="latest-date">{asEnglishDate(new Date(post.data.pubDate))}</span>
+              <span class="latest-dot">·</span>
+              <span class="latest-cat">{cat.name.toUpperCase()}</span>
+            </div>
+
+            <div class="latest-content">
+              <h3 class="latest-title">{post.data.title}</h3>
+              <p class="latest-desc">{post.data.description}</p>
+              {post.data.tags && post.data.tags.length > 0 && (
+                <div class="latest-tags">
+                  {post.data.tags.slice(0, 3).map((tag) => (
+                    <span class="latest-tag">#{tag}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div
+              class="latest-cover"
+              style={`background: ${gradientFor(post.slug, post.data.category)};`}
+              aria-hidden="true"
+            >
+              <span class="latest-cover-noise"></span>
+              <span class="latest-cover-cta">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
+              </span>
+            </div>
+          </a>
+        </li>
+      );
+    })}
+  </ul>
+</section>
+
+<style>
+  .latest-section {
+    position: relative;
+    padding: var(--section-pad) var(--spacing-lg);
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .latest-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .latest-headline {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4.5vw, 3.6rem);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin: 0.4rem 0 0;
+    color: var(--color-text);
+  }
+
+  .latest-explore {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    color: var(--color-text-secondary);
+    border: none;
+    padding: 0.45rem 0.85rem;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--color-border);
+    transition: color var(--duration-fast) var(--ease-smooth),
+                border-color var(--duration-fast) var(--ease-smooth),
+                gap var(--duration-fast) var(--ease-smooth);
+  }
+
+  .latest-explore:hover {
+    color: var(--color-text);
+    border-color: var(--color-border-strong);
+    gap: 0.7rem;
+  }
+
+  /* ---------- 列表 ---------- */
+  .latest-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .latest-item {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .latest-link {
+    display: grid;
+    grid-template-columns: 110px 1fr 200px;
+    gap: var(--spacing-lg);
+    align-items: center;
+    padding: 1.6rem 0;
+    color: var(--color-text);
+    text-decoration: none;
+    border: none;
+    transition: background-color var(--duration-fast) var(--ease-smooth),
+                padding var(--duration-fast) var(--ease-smooth);
+  }
+
+  .latest-link:hover {
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0%, transparent 95%);
+  }
+
+  /* ---------- 左侧元信息 ---------- */
+  .latest-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    align-self: start;
+    padding-top: 0.4rem;
+  }
+
+  .latest-date {
+    color: var(--color-text);
+    font-weight: 500;
+  }
+
+  .latest-dot {
+    display: none;
+  }
+
+  .latest-cat {
+    color: var(--color-text-tertiary);
+  }
+
+  /* ---------- 中间正文 ---------- */
+  .latest-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  .latest-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 2vw, 1.6rem);
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+    color: var(--color-text);
+    margin: 0;
+    transition: color var(--duration-fast) var(--ease-smooth);
+  }
+
+  .latest-link:hover .latest-title {
+    color: #ffffff;
+  }
+
+  .latest-desc {
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .latest-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.2rem;
+  }
+
+  .latest-tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.05em;
+  }
+
+  /* ---------- 右侧渐变占位 ---------- */
+  .latest-cover {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    transition: transform var(--duration-base) var(--ease-smooth);
+  }
+
+  .latest-cover::after {
+    /* 内嵌发光环 */
+    content: '';
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .latest-link:hover .latest-cover {
+    transform: scale(1.02);
+  }
+
+  /* 噪点纹理(用 svg 内联) */
+  .latest-cover-noise {
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255, 255, 255, 0.4), transparent 50%),
+      radial-gradient(1px 1px at 60% 70%, rgba(255, 255, 255, 0.3), transparent 50%),
+      radial-gradient(1.5px 1.5px at 40% 80%, rgba(255, 255, 255, 0.35), transparent 50%),
+      radial-gradient(1px 1px at 80% 20%, rgba(255, 255, 255, 0.25), transparent 50%);
+    mix-blend-mode: overlay;
+    opacity: 0.6;
+  }
+
+  .latest-cover-cta {
+    position: absolute;
+    right: 12px;
+    bottom: 10px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: var(--color-text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--duration-fast) var(--ease-smooth),
+                transform var(--duration-fast) var(--ease-smooth);
+  }
+
+  .latest-link:hover .latest-cover-cta {
+    background: var(--color-text);
+    color: var(--color-bg);
+    transform: translateX(3px);
+  }
+
+  /* ---------- 响应式 ---------- */
+  @media (max-width: 960px) {
+    .latest-link {
+      grid-template-columns: 90px 1fr;
+      gap: var(--spacing-md);
+    }
+
+    .latest-cover {
+      display: none;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .latest-link {
+      grid-template-columns: 1fr;
+      gap: 0.6rem;
+    }
+
+    .latest-meta {
+      flex-direction: row;
+      gap: 0.4rem;
+      padding-top: 0;
+    }
+
+    .latest-dot {
+      display: inline;
+    }
+
+    .latest-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-sm);
+    }
+  }
+</style>

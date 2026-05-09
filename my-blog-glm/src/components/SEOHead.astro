@@ -1,0 +1,33 @@
+---
+// SEO 增强组件（可选）
+import { SITE_CONFIG } from '@/config';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = SITE_CONFIG.title,
+  description = SITE_CONFIG.description,
+  canonical,
+  noindex = false
+} = Astro.props;
+
+const fullTitle = title === SITE_CONFIG.title ? title : `${title} | ${SITE_CONFIG.title}`;
+---
+
+<!-- 基础 SEO -->
+<title>{fullTitle}</title>
+<meta name="description" content={description}>
+{canonical && <link rel="canonical" href={canonical}>}
+{noindex && <meta name="robots" content="noindex, nofollow">}
+
+<!-- 作者信息 -->
+<meta name="author" content={SITE_CONFIG.author}>
+
+<!-- 语言 -->
+<html lang="zh-CN">
+

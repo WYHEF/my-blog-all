@@ -1,0 +1,232 @@
+/* 全局样式和 CSS 变量 */
+:root {
+  /* 颜色系统 - Claude/Anthropic 风格 (Paper-like) */
+  --color-bg: #fafaf8; /* 暖米白，像纸张一样 */
+  --color-bg-secondary: #f2f1ea; /* 稍深的暖灰，用于引用或代码块 */
+  --color-text: #2d2d2d; /* 深炭灰，比纯黑更柔和 */
+  --color-text-secondary: #666460; /* 暖灰色 */
+  --color-primary: #d97757; /* 类似赤土色的暖橙色，用于强调 */
+  --color-primary-hover: #b85d3f;
+  --color-border: #e6e4dd; /* 暖色调边框 */
+  --color-code-bg: #f2f1ea;
+  --color-code-text: #4a4a4a; /* 默认代码颜色 */
+  
+  /* 间距 */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 4rem;
+  
+  /* 字体 - Typora 风格 (Sans-Serif) */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-serif: "Merriweather", "Georgia", serif; /* 仅作为备用 */
+  --font-mono: "Cascadia Code", "Fira Code", "Menlo", "Monaco", "Courier New", monospace;
+  
+  /* 字体设置 - 统一使用无衬线体 */
+  --font-body: var(--font-sans);
+  --font-heading: var(--font-sans); /* 标题也改回无衬线，更像 Typora */
+  
+  /* 文章正文字号变量，默认 17px */
+  --article-font-size: 17px; 
+
+
+  
+  /* 布局 */
+  --sidebar-width: 240px;
+  
+  /* 圆角 */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+}
+
+/* 暗色模式 - Claude Dark Style */
+html.dark {
+  --color-bg: #1a1a1a; /* 深炭灰背景，不刺眼 */
+  --color-bg-secondary: #242424; /* 稍亮的深灰 */
+  --color-text: #e0e0e0; /* 暖白文字 */
+  --color-text-secondary: #a0a0a0; /* 暖灰文字 */
+  --color-primary: #e08e6d; /* 稍亮的赤土色 */
+  --color-primary-hover: #ffad8f;
+  --color-border: #333333; /* 深色边框 */
+  --color-code-bg: #242424;
+  --color-code-text: #e0e0e0; /* 暗色模式代码颜色 */
+}
+
+/* 移除暗色模式媒体查询，强制亮色 */
+
+/* 重置和基础样式 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-body);
+  font-size: 16px; /* 恢复固定基准，不随文章调整而变 */
+  line-height: 1.8; /* 增加行高，更宽松 */
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* 链接 */
+a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+a:hover {
+  color: var(--color-text); /* 保持文字颜色，只显示下划线 */
+  border-bottom-color: var(--color-primary); /* 下划线用强调色 */
+  text-decoration: none;
+}
+
+/* 标题 - 使用衬线体 */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600; /* 不过分加粗 */
+  line-height: 1.3;
+  margin-bottom: var(--spacing-sm);
+  letter-spacing: -0.01em;
+  color: var(--color-text); /* 使用变量而不是写死 #1a1a1a */
+}
+
+h1 { font-size: 2.75rem; font-weight: 500; }
+h2 { font-size: 2rem; font-weight: 500; margin-top: var(--spacing-lg); }
+h3 { font-size: 1.5rem; font-weight: 500; margin-top: var(--spacing-md); }
+h4 { font-size: 1.25rem; }
+
+/* 段落 */
+p {
+  margin-bottom: var(--spacing-md);
+  /* 移除 max-width: 65ch */
+}
+
+/* 列表 */
+ul, ol {
+  margin-left: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+li {
+  margin-bottom: 0.5em;
+}
+
+/* 代码 */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background-color: var(--color-code-bg);
+  padding: 0.2em 0.4em;
+  border-radius: var(--radius-sm);
+  color: var(--color-code-text); /* 使用变量 */
+}
+
+pre {
+  background-color: var(--color-code-bg);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  margin-bottom: var(--spacing-md);
+  border: 1px solid var(--color-border);
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  font-size: 0.875rem;
+  color: inherit;
+}
+
+/* 图片 */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 引用 */
+blockquote {
+  border-left: 3px solid var(--color-primary); /* 使用强调色 */
+  padding-left: var(--spacing-md);
+  margin: var(--spacing-lg) 0;
+  color: var(--color-text-secondary);
+  font-family: var(--font-heading); /* 引用也用衬线体 */
+  font-style: italic;
+  background-color: transparent;
+}
+
+/* 分隔线 */
+hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: var(--spacing-xl) 0;
+}
+
+/* 表格 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--spacing-md);
+  font-size: 0.95rem;
+}
+
+th, td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+}
+
+th {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--color-text);
+  border-bottom: 2px solid var(--color-border);
+}
+
+/* 工具类 */
+.container {
+  max-width: none; /* 移除宽度限制 */
+  margin: 0;
+  padding: 0 var(--spacing-lg);
+  width: 100%;
+}
+
+.container-narrow {
+  max-width: none; /* 移除宽度限制 */
+  margin: 0;
+  padding: 0 var(--spacing-lg);
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .container,
+  .container-narrow {
+    padding: 0 var(--spacing-md);
+  }
+  
+  html {
+    font-size: 16px;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

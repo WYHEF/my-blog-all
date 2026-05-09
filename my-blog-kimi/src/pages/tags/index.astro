@@ -1,0 +1,131 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { getAllTags } from '@/utils/post';
+import { SITE_CONFIG } from '@/config';
+
+const tags = await getAllTags();
+const maxCount = Math.max(...tags.map((t) => t.count), 1);
+---
+
+<BaseLayout
+  title={`标签 - ${SITE_CONFIG.title}`}
+  description="按标签浏览文章"
+>
+  <div class="container">
+    <header class="tags-header">
+      <span class="tags-kicker">[ TAGS ]</span>
+      <h1 class="tags-title">All tags</h1>
+      <p class="tags-description">共 <strong>{tags.length}</strong> 个标签</p>
+    </header>
+
+    <div class="tags-cloud">
+      {tags.map(({ tag, count }) => {
+        const ratio = count / maxCount;
+        const fontSize = (0.9 + ratio * 0.8).toFixed(2);
+        const opacity = (0.5 + ratio * 0.5).toFixed(2);
+        return (
+          <a
+            href={`/tags/${tag}`}
+            class="tag-item"
+            style={`font-size: ${fontSize}rem; --tag-opacity: ${opacity};`}
+          >
+            <span class="tag-hash">#</span>{tag}
+            <span class="tag-count">{count}</span>
+          </a>
+        );
+      })}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .tags-header {
+    padding: var(--spacing-xl) 0 var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .tags-kicker {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.18em;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .tags-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin: 0 0 var(--spacing-sm);
+  }
+
+  .tags-description {
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  .tags-description strong {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+
+  .tags-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.1rem;
+    padding: var(--spacing-md) 0;
+  }
+
+  .tag-item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.2rem;
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-weight: 500;
+    line-height: 1.3;
+    border: none;
+    padding: 0.15rem 0.3rem;
+    border-radius: var(--radius-sm);
+    opacity: var(--tag-opacity, 0.8);
+    transition: opacity var(--duration-fast) var(--ease-smooth),
+                color var(--duration-fast) var(--ease-smooth),
+                background-color var(--duration-fast) var(--ease-smooth),
+                transform var(--duration-fast) var(--ease-smooth);
+  }
+
+  .tag-hash {
+    color: var(--color-text-tertiary);
+    margin-right: 0.05em;
+  }
+
+  .tag-item:hover {
+    opacity: 1;
+    color: var(--color-text);
+    background-color: rgba(255, 255, 255, 0.06);
+    transform: translateY(-1px);
+  }
+
+  .tag-item:hover .tag-hash {
+    color: var(--color-text);
+  }
+
+  .tag-count {
+    font-family: var(--font-mono);
+    font-size: 0.62em;
+    color: var(--color-text-tertiary);
+    margin-left: 0.25em;
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 768px) {
+    .tags-cloud {
+      gap: 0.4rem 0.8rem;
+    }
+  }
+</style>

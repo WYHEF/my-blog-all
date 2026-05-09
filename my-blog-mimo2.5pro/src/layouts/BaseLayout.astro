@@ -1,0 +1,79 @@
+---
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import '@/styles/global.css';
+import '@/styles/animations.css';
+import { getSEO, type SEOProps } from '@/utils/seo';
+import type { MarkdownHeading } from 'astro';
+import { ViewTransitions } from 'astro:transitions';
+
+interface Props extends SEOProps {
+  class?: string;
+  headings?: MarkdownHeading[];
+}
+
+const {
+  title,
+  description,
+  image,
+  article,
+  publishedTime,
+  tags,
+  class: className,
+  headings
+} = Astro.props;
+
+const seo = getSEO({ title, description, image, article, publishedTime, tags });
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta name="generator" content={Astro.generator}>
+
+  <title>{seo.title}</title>
+  <meta name="description" content={seo.description}>
+
+  <meta property="og:type" content={seo.openGraph.type}>
+  <meta property="og:title" content={seo.openGraph.title}>
+  <meta property="og:description" content={seo.openGraph.description}>
+  <meta property="og:image" content={seo.openGraph.image}>
+
+  <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml">
+
+  <ViewTransitions />
+</head>
+<body>
+  <!-- 粒子背景 -->
+  <canvas id="particle-bg"></canvas>
+
+  <!-- 鼠标光晕 -->
+  <div id="cursor-glow"></div>
+
+  <Header />
+
+  <main class:list={['site-main', className]}>
+    <slot />
+  </main>
+
+  <Footer />
+
+  <!-- 动画系统初始化 -->
+  <script>
+    import '@/scripts/view-transition-manager';
+    import '@/scripts/particle-bg';
+    import '@/scripts/cursor-glow';
+    import '@/scripts/scroll-animations';
+  </script>
+</body>
+</html>
+
+<style>
+  .site-main {
+    min-height: calc(100vh - var(--header-height));
+    padding-top: var(--header-height);
+  }
+</style>

@@ -1,0 +1,313 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import PostCard from '@components/PostCard.astro';
+import { getAllPosts } from '@/utils/post';
+import { SITE_CONFIG } from '@/config';
+
+const posts = await getAllPosts();
+const featuredPosts = posts.slice(0, 3);
+const recentPosts = posts.slice(3, 9);
+---
+
+<BaseLayout title={SITE_CONFIG.title} description={SITE_CONFIG.description}>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title gradient-text">
+        探索代码的世界
+      </h1>
+      <p class="hero-subtitle">
+        技术 · 学习 · 生活 — 记录每一个值得铭记的瞬间
+      </p>
+      <div class="hero-cta">
+        <a href="#latest" class="btn-primary">探索文章</a>
+        <a href="/about" class="btn-secondary">关于我</a>
+      </div>
+    </div>
+
+    <div class="scroll-indicator">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 5v14M5 12l7 7 7-7"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Featured Posts -->
+  <section class="section featured-section" id="latest">
+    <div class="container">
+      <h2 class="section-title reveal-fade-up">精选文章</h2>
+      <div class="featured-grid reveal-stagger">
+        {featuredPosts.map((post) => (
+          <PostCard post={post} featured />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Posts -->
+  <section class="section recent-section">
+    <div class="container">
+      <h2 class="section-title reveal-fade-up">最新更新</h2>
+      <div class="posts-grid reveal-stagger">
+        {recentPosts.map((post) => (
+          <PostCard post={post} />
+        ))}
+      </div>
+      {posts.length > 9 && (
+        <div class="view-all reveal-fade-up">
+          <a href="/category/tech" class="btn-secondary">查看全部文章 →</a>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Tech Stack Marquee -->
+  <section class="section tech-section">
+    <div class="container">
+      <h2 class="section-title reveal-fade-up">技术栈</h2>
+      <div class="tech-tags reveal-stagger">
+        {['Python', 'TypeScript', 'Astro', 'React', 'Vue', 'Node.js', 'Docker', 'Git', 'Linux', 'AI/ML', 'WSL', 'PyCharm'].map(tag => (
+          <span class="tech-tag">{tag}</span>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Hero Section */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    padding: var(--spacing-xl);
+  }
+
+  .hero-content {
+    max-width: 800px;
+    z-index: 1;
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: var(--spacing-md);
+    letter-spacing: -0.03em;
+  }
+
+  .hero-subtitle {
+    font-size: clamp(1rem, 2.5vw, 1.35rem);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xl);
+    line-height: 1.6;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    background: linear-gradient(135deg, var(--color-accent-1), var(--color-accent-2));
+    color: #ffffff;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    border: none;
+    transition: all var(--transition-normal) var(--ease-out);
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+    color: #ffffff;
+    border-bottom: none;
+  }
+
+  .btn-secondary {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    background: transparent;
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all var(--transition-normal) ease;
+  }
+
+  .btn-secondary:hover {
+    color: var(--color-text);
+    border-color: var(--color-border-hover);
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid var(--color-border-hover);
+  }
+
+  :global(html.light) .btn-secondary:hover {
+    background: rgba(0, 0, 0, 0.03);
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    color: var(--color-text-muted);
+    animation: bounce 2s infinite;
+    opacity: 0.5;
+  }
+
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(8px); }
+    60% { transform: translateY(4px); }
+  }
+
+  /* Sections */
+  .section {
+    padding: var(--spacing-xl) 0;
+  }
+
+  .section-title {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  /* Featured Grid */
+  .featured-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: var(--spacing-lg);
+  }
+
+  /* Posts Grid */
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--spacing-md);
+  }
+
+  .view-all {
+    text-align: center;
+    margin-top: var(--spacing-xl);
+  }
+
+  /* Tech Tags */
+  .tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    justify-content: center;
+  }
+
+  .tech-tag {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    transition: all var(--transition-normal) ease;
+    cursor: default;
+  }
+
+  .tech-tag:hover {
+    color: var(--color-accent-2);
+    border-color: var(--color-accent-2);
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.15);
+  }
+
+  /* Gradient divider */
+  .featured-section,
+  .recent-section {
+    border-top: 1px solid var(--color-border);
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      padding: var(--spacing-lg);
+      min-height: 90vh;
+    }
+
+    .featured-grid,
+    .posts-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-cta {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+
+  /* Hero 入场动画 */
+  .hero-title {
+    animation: hero-fade-in 0.8s var(--ease-out) 0.2s both;
+  }
+
+  .hero-subtitle {
+    animation: hero-fade-in 0.8s var(--ease-out) 0.4s both;
+  }
+
+  .hero-cta {
+    animation: hero-fade-in 0.8s var(--ease-out) 0.6s both;
+  }
+
+  .scroll-indicator {
+    animation: hero-fade-in 0.8s var(--ease-out) 1s both;
+  }
+
+  @keyframes hero-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-title,
+    .hero-subtitle,
+    .hero-cta,
+    .scroll-indicator {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+
+    .scroll-indicator {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+
+  // Hero 入场动画增强（仅在非 reduced-motion 下）
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // 可以在这里添加更复杂的 GSAP timeline
+  }
+</script>

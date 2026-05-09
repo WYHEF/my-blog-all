@@ -1,0 +1,391 @@
+/* ============================================
+   x.ai (Grok) Dark Theme Design System
+   纯暗色模式 · 深空黑风格
+   ============================================ */
+
+:root {
+  /* === 颜色系统 === */
+  --color-bg: #000000;
+  --color-bg-secondary: #0a0a0a;
+  --color-surface: #0d0d0d;
+  --color-surface-elevated: #111111;
+  --color-surface-hover: #161616;
+
+  --color-text: #f5f5f5;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a0a0a0;
+  --color-text-muted: #888888;
+
+  /* 强调色：紫 → 蓝渐变 */
+  --color-accent: #7c3aed;
+  --color-accent-blue: #3b82f6;
+  --color-accent-light: #a78bfa;
+  --gradient-accent: linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%);
+  --gradient-text: linear-gradient(135deg, #7c3aed 0%, #3b82f6 50%, #06b6d4 100%);
+
+  /* 边框 */
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-border-hover: rgba(124, 58, 237, 0.25);
+
+  /* 代码 */
+  --color-code-bg: #111111;
+  --color-code-text: #e0e0e0;
+
+  /* === 间距 === */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 4rem;
+  --spacing-2xl: 6rem;
+  --spacing-3xl: 8rem;
+
+  /* === 字体 === */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+  --font-serif: "Merriweather", "Georgia", serif;
+  --font-mono: "Cascadia Code", "Fira Code", "Menlo", "Monaco",
+    "Courier New", monospace;
+  --font-body: var(--font-sans);
+  --font-heading: var(--font-sans);
+  --article-font-size: 17px;
+
+  /* === 布局 === */
+  --container-max: 1200px;
+  --nav-height: 68px;
+
+  /* === 圆角 === */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --card-radius: 16px;
+  --btn-radius: 10px;
+
+  /* === 阴影 & 光晕 === */
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
+  --shadow-glow-purple: 0 0 30px rgba(124, 58, 237, 0.15);
+  --shadow-glow-blue: 0 0 30px rgba(59, 130, 246, 0.15);
+
+  /* === 动画时间 === */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   重置和基础样式
+   ============================================ */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ============================================
+   链接
+   ============================================ */
+
+a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-accent-light);
+  border-bottom-color: var(--color-accent);
+  text-decoration: none;
+}
+
+/* ============================================
+   标题
+   ============================================ */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: 1.25;
+  margin-bottom: var(--spacing-sm);
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+}
+
+h1 { font-size: 2.75rem; font-weight: 700; }
+h2 { font-size: 2rem; font-weight: 700; margin-top: var(--spacing-lg); }
+h3 { font-size: 1.5rem; font-weight: 600; margin-top: var(--spacing-md); }
+h4 { font-size: 1.25rem; }
+
+/* ============================================
+   段落 / 列表
+   ============================================ */
+
+p {
+  margin-bottom: var(--spacing-md);
+}
+
+ul, ol {
+  margin-left: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+li {
+  margin-bottom: 0.5em;
+}
+
+/* ============================================
+   代码
+   ============================================ */
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background-color: var(--color-code-bg);
+  padding: 0.2em 0.4em;
+  border-radius: var(--radius-sm);
+  color: var(--color-code-text);
+}
+
+pre {
+  background-color: var(--color-code-bg);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  margin-bottom: var(--spacing-md);
+  border: 1px solid var(--color-border);
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  font-size: 0.875rem;
+  color: inherit;
+}
+
+/* ============================================
+   图片
+   ============================================ */
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-md);
+}
+
+/* ============================================
+   引用
+   ============================================ */
+
+blockquote {
+  border-left: 3px solid var(--color-accent);
+  padding-left: var(--spacing-md);
+  margin: var(--spacing-lg) 0;
+  color: var(--color-text-secondary);
+  font-style: italic;
+  background: rgba(124, 58, 237, 0.05);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+
+/* ============================================
+   分隔线
+   ============================================ */
+
+hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: var(--spacing-xl) 0;
+}
+
+/* ============================================
+   表格
+   ============================================ */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--spacing-md);
+  font-size: 0.95rem;
+}
+
+th, td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+}
+
+th {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  border-bottom: 2px solid var(--color-border);
+  background: var(--color-surface-elevated);
+}
+
+/* ============================================
+   工具类
+   ============================================ */
+
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+  width: 100%;
+}
+
+.container-narrow {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+  width: 100%;
+}
+
+.content-wrapper {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+/* 渐变文字 */
+.gradient-text {
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 毛玻璃效果 */
+.glass {
+  background: rgba(13, 13, 13, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-border);
+}
+
+/* 滚动淡入动画基础类 */
+.animate-fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ============================================
+   关键帧动画
+   ============================================ */
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-15px) rotate(1deg); }
+  66% { transform: translateY(8px) rotate(-1deg); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ============================================
+   Focus 样式 (无障碍)
+   ============================================ */
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   减少动效模式 (无障碍)
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-fade-up {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ============================================
+   响应式
+   ============================================ */
+
+@media (max-width: 768px) {
+  .container,
+  .container-narrow,
+  .content-wrapper {
+    padding: 0 var(--spacing-md);
+  }
+
+  html {
+    font-size: 16px;
+  }
+
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.5rem; }
+}

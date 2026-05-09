@@ -1,0 +1,219 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Pagination from '@components/Pagination.astro';
+import { formatDate, getAdjacentPosts } from '@/utils/post';
+import { SITE_CONFIG } from '@/config';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post }
+  }));
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await post.render();
+
+const { title, description, pubDate, updatedDate, category, tags, cover } = post.data;
+const categoryConfig = SITE_CONFIG.categories[category];
+
+const { prev, next } = await getAdjacentPosts(post.slug);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  image={cover}
+  article={true}
+  publishedTime={pubDate}
+  tags={tags}
+>
+  <div class="content-wrapper">
+    <article class="post">
+      <header class="post-header">
+        <div class="post-meta">
+          <a href={`/category/${category}`} class="category-tag">{categoryConfig.displayName}</a>
+          <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+        </div>
+
+        <h1 class="post-title">{title}</h1>
+        <p class="post-description">{description}</p>
+
+        {tags && tags.length > 0 && (
+          <div class="post-tags">
+            {tags.map(tag => (
+              <a href={`/tags/${tag}`} class="tag">#{tag}</a>
+            ))}
+          </div>
+        )}
+
+        {cover && (
+          <img src={cover} alt={title} class="post-cover" loading="lazy">
+        )}
+      </header>
+
+      <div class="post-content">
+        <Content />
+
+        {updatedDate && (
+          <div class="post-updated">最后更新：{formatDate(updatedDate)}</div>
+        )}
+      </div>
+
+      <Pagination
+        prev={prev ? { title: prev.data.title, url: `/blog/${prev.slug}` } : undefined}
+        next={next ? { title: next.data.title, url: `/blog/${next.slug}` } : undefined}
+      />
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .post {
+    max-width: 800px;
+    margin: var(--spacing-xl) auto;
+    font-size: var(--article-font-size);
+    line-height: 1.8;
+  }
+
+  .post-header {
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .category-tag {
+    color: var(--color-accent-light);
+    text-decoration: none;
+    font-weight: 600;
+    background: rgba(124, 58, 237, 0.12);
+    padding: 0.15em 0.6em;
+    border-radius: var(--radius-sm);
+    border: none;
+    transition: background var(--transition-fast);
+  }
+
+  .category-tag:hover {
+    background: rgba(124, 58, 237, 0.2);
+  }
+
+  .post-title {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    line-height: 1.2;
+    margin-bottom: var(--spacing-md);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .post-description {
+    font-size: 1.15rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.6;
+  }
+
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .tag {
+    color: var(--color-text-muted);
+    font-size: 0.82rem;
+    font-family: var(--font-mono);
+    background: var(--color-surface-elevated);
+    padding: 0.2em 0.6em;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    text-decoration: none;
+    border-bottom: none;
+    transition: all var(--transition-fast);
+  }
+
+  .tag:hover {
+    color: var(--color-accent-light);
+    border-color: rgba(124, 58, 237, 0.3);
+    background: rgba(124, 58, 237, 0.08);
+  }
+
+  .post-cover {
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+    margin-top: var(--spacing-lg);
+  }
+
+  /* 文章正文排版 */
+  .post-content :global(h2) {
+    margin-top: var(--spacing-xl);
+    margin-bottom: var(--spacing-md);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+
+  .post-content :global(h3) {
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-sm);
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+
+  .post-content :global(p) {
+    margin-bottom: 1.5em;
+    color: var(--color-text-secondary);
+  }
+
+  .post-content :global(img) {
+    margin: var(--spacing-lg) auto;
+    border-radius: var(--radius-md);
+    max-width: 100%;
+  }
+
+  .post-content :global(a) {
+    color: var(--color-accent-light);
+    border-bottom-color: rgba(124, 58, 237, 0.3);
+  }
+
+  .post-content :global(a:hover) {
+    border-bottom-color: var(--color-accent-light);
+  }
+
+  .post-content :global(blockquote) {
+    border-left-color: var(--color-accent);
+    background: rgba(124, 58, 237, 0.04);
+  }
+
+  .post-updated {
+    margin-top: var(--spacing-xl);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+  }
+
+  @media (max-width: 768px) {
+    .post {
+      margin: var(--spacing-lg) auto;
+      padding: 0 var(--spacing-md);
+    }
+  }
+</style>

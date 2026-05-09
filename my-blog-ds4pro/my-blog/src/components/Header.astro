@@ -1,0 +1,134 @@
+---
+import { SITE_CONFIG } from '@/config';
+import ThemeToggle from './ThemeToggle.astro';
+import FontResizer from './FontResizer.astro'; // 引入组件
+
+const currentPath = Astro.url.pathname;
+
+// 辅助函数：检查链接是否激活
+function isActive(path: string) {
+  if (path === '/') return currentPath === '/';
+  return currentPath.startsWith(path);
+}
+---
+
+<header class="header">
+  <div class="header-inner">
+    <a href="/" class="logo">
+      {SITE_CONFIG.title}
+    </a>
+    
+    <nav class="nav">
+      <ul class="nav-links">
+        {SITE_CONFIG.navLinks.map(link => (
+          <li>
+            <a 
+              href={link.path} 
+              class:list={['nav-link', { active: isActive(link.path) }]}
+            >
+              {link.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    
+    <div class="header-right">
+      <FontResizer />
+      <ThemeToggle />
+      <a href={SITE_CONFIG.github} target="_blank" rel="noopener noreferrer" class="social-link">GitHub</a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    z-index: 1000;
+  }
+  
+  .header-inner {
+    width: 100%; /* 铺满 */
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-lg); /* 左右保留一点点间距 */
+  }
+  
+  .logo {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text);
+    text-decoration: none;
+    margin-right: var(--spacing-xl);
+    border: none;
+  }
+  
+  .nav {
+    flex: 1;
+  }
+  
+  .nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: var(--spacing-lg);
+  }
+  
+  .nav-link {
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 0.5rem 0;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+  }
+  
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--color-text);
+    border-bottom-color: var(--color-primary);
+  }
+  
+  .header-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm); /* 稍微减小间距 */
+  }
+  
+  .social-link {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    border: none;
+  }
+  
+  .social-link:hover {
+    color: var(--color-text);
+  }
+  
+  @media (max-width: 768px) {
+    .header-inner {
+      padding: 0 var(--spacing-md);
+    }
+    
+    .nav-links {
+      gap: var(--spacing-md);
+    }
+    
+    .social-link {
+      display: none;
+    }
+  }
+</style>

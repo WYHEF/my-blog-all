@@ -1,0 +1,105 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import PostCard from '@components/PostCard.astro';
+import { getPostsByCategory } from '@/utils/post';
+import { SITE_CONFIG, type Category } from '@/config';
+
+export async function getStaticPaths() {
+  const categories = Object.keys(SITE_CONFIG.categories) as Category[];
+
+  return Promise.all(
+    categories.map(async (category) => {
+      const posts = await getPostsByCategory(category);
+      return {
+        params: { category },
+        props: { posts, category }
+      };
+    })
+  );
+}
+
+const { posts, category } = Astro.props;
+const categoryConfig = SITE_CONFIG.categories[category as Category];
+---
+
+<BaseLayout
+  title={`${categoryConfig.displayName} - ${SITE_CONFIG.title}`}
+  description={categoryConfig.description}
+  currentCategory={category}
+>
+  <div class="page-container">
+    <header class="page-header">
+      <div class="section-label">| CATEGORY</div>
+      <h1 class="page-title">{categoryConfig.displayName}</h1>
+      <p class="page-description">{categoryConfig.description}</p>
+    </header>
+
+    <div class="posts-list">
+      {posts.map((post) => (
+        <PostCard post={post} />
+      ))}
+    </div>
+
+    {posts.length === 0 && (
+      <div class="empty-state">
+        <p>该分类下暂无文章</p>
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--spacing-xl) var(--spacing-lg);
+  }
+
+  .page-header {
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-xl);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .page-description {
+    font-size: 1.1rem;
+    color: var(--color-text-secondary);
+  }
+
+  .posts-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .empty-state {
+    padding: var(--spacing-xl) 0;
+    color: var(--color-text-muted);
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    .page-container {
+      padding: var(--spacing-lg) var(--spacing-md);
+    }
+
+    .page-title {
+      font-size: 2rem;
+    }
+  }
+</style>

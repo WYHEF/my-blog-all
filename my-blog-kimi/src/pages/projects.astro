@@ -1,0 +1,361 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { SITE_CONFIG } from '@/config';
+
+const projects = [
+  {
+    name: '星煜凡程',
+    english: 'Long-Term Goals',
+    desc: '个人长期目标管理与追踪平台,记录每一段成长轨迹。',
+    url: 'https://goals.wyhef.cloud',
+    github: 'https://github.com/WYHEF/long-term-goals',
+    tech: ['Web', '全栈', 'Vue'],
+    accent: '180, 140, 255',
+    glyph: 'target',
+  },
+  {
+    name: 'KMP 算法可视化',
+    english: 'KMP Visualizer',
+    desc: 'KMP 字符串匹配算法的交互式可视化演示。让指针的"跳"被看见。',
+    url: 'https://kmp.wyhef.cloud',
+    github: 'https://github.com/WYHEF/kmp',
+    tech: ['算法', '可视化', '前端'],
+    accent: '120, 170, 255',
+    glyph: 'search',
+  },
+  {
+    name: '个人博客',
+    english: 'This Site',
+    desc: '基于 Astro 4.x 构建的静态博客,深色 x.ai 风格视觉系统。',
+    url: 'https://www.wyhef.cloud',
+    github: 'https://github.com/WYHEF/my-blog',
+    tech: ['Astro', 'TypeScript', 'SSG'],
+    accent: '255, 138, 61',
+    glyph: 'pen',
+  },
+];
+---
+
+<BaseLayout
+  title={`成品项目 - ${SITE_CONFIG.title}`}
+  description={`${SITE_CONFIG.author}的个人项目展示`}
+>
+  <div class="projects-container">
+    <header class="projects-header">
+      <span class="projects-kicker">[ PROJECTS ]</span>
+      <h1 class="projects-title">Build, ship, learn.</h1>
+      <p class="projects-desc">
+        独立完成的几个项目。每一个都是一段学习与实践的轨迹。
+      </p>
+    </header>
+
+    <div class="projects-grid">
+      {projects.map((project) => (
+        <article
+          class="project-card"
+          style={`--accent: ${project.accent};`}
+          data-reveal
+        >
+          <div class="project-card-glow" aria-hidden="true"></div>
+
+          <div class="project-card-head">
+            <div class="project-icon" aria-hidden="true">
+              {project.glyph === 'target' && (
+                <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="32" cy="32" r="24"></circle>
+                  <circle cx="32" cy="32" r="14" opacity="0.7"></circle>
+                  <circle cx="32" cy="32" r="6" fill="currentColor"></circle>
+                  <path d="M32 4v8" opacity="0.5"></path>
+                  <path d="M32 52v8" opacity="0.5"></path>
+                  <path d="M4 32h8" opacity="0.5"></path>
+                  <path d="M52 32h8" opacity="0.5"></path>
+                </svg>
+              )}
+              {project.glyph === 'search' && (
+                <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="26" cy="26" r="16"></circle>
+                  <path d="m38 38 18 18"></path>
+                  <path d="M18 26h16" opacity="0.5"></path>
+                  <path d="M26 18v16" opacity="0.5"></path>
+                </svg>
+              )}
+              {project.glyph === 'pen' && (
+                <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M44 4l16 16-32 32-12 4 4-12 24-40z"></path>
+                  <path d="M40 8l16 16" opacity="0.5"></path>
+                  <path d="M16 44l4 4" opacity="0.5"></path>
+                </svg>
+              )}
+            </div>
+
+            <div class="project-titles">
+              <span class="project-english">{project.english}</span>
+              <h2 class="project-name">{project.name}</h2>
+            </div>
+          </div>
+
+          <p class="project-desc">{project.desc}</p>
+
+          <div class="project-tech">
+            {project.tech.map((t) => (
+              <span class="tech-tag">{t}</span>
+            ))}
+          </div>
+
+          <div class="project-links">
+            <a href={project.url} target="_blank" rel="noopener noreferrer" class="project-link primary">
+              <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+              在线访问
+            </a>
+            <a href={project.github} target="_blank" rel="noopener noreferrer" class="project-link">
+              <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+              源码
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .projects-container {
+    max-width: 1080px;
+    margin: 0;
+    padding-right: var(--spacing-lg);
+  }
+
+  /* ---------- 头部 ---------- */
+  .projects-header {
+    padding: var(--spacing-xl) 0 var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .projects-kicker {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.18em;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .projects-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 3.6rem);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--color-text);
+    margin: 0 0 var(--spacing-sm);
+  }
+
+  .projects-desc {
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    margin: 0;
+    max-width: 60ch;
+  }
+
+  /* ---------- 卡片栅格 ---------- */
+  .projects-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  /* ---------- 卡片 ---------- */
+  .project-card {
+    position: relative;
+    padding: 2rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 60%);
+    overflow: hidden;
+    isolation: isolate;
+    transition: border-color var(--duration-base) var(--ease-smooth),
+                transform var(--duration-base) var(--ease-smooth),
+                box-shadow var(--duration-base) var(--ease-smooth);
+  }
+
+  .project-card-glow {
+    position: absolute;
+    top: -120px;
+    right: -120px;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(var(--accent), 0.45), transparent 60%);
+    filter: blur(80px);
+    opacity: 0.45;
+    z-index: -1;
+    pointer-events: none;
+    transition: opacity var(--duration-base) var(--ease-smooth),
+                transform var(--duration-slow) var(--ease-smooth);
+  }
+
+  .project-card:hover {
+    border-color: var(--color-border-strong);
+    transform: translateY(-3px);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06),
+                0 30px 80px -20px rgba(0, 0, 0, 0.6),
+                0 0 60px -10px rgba(var(--accent), 0.25);
+  }
+
+  .project-card:hover .project-card-glow {
+    opacity: 0.7;
+    transform: translate(-10%, 10%) scale(1.05);
+  }
+
+  /* ---------- 卡片头部 ---------- */
+  .project-card-head {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .project-icon {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+
+  .project-icon svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .project-titles {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+
+  .project-english {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .project-name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--color-text);
+    margin: 0;
+    letter-spacing: -0.015em;
+  }
+
+  /* ---------- 描述 ---------- */
+  .project-desc {
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.65;
+    margin: 0 0 var(--spacing-md);
+    max-width: 64ch;
+  }
+
+  /* ---------- 技术标签 ---------- */
+  .project-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .tech-tag {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--color-text-secondary);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0.25em 0.65em;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-border);
+    letter-spacing: 0.04em;
+  }
+
+  /* ---------- 链接 ---------- */
+  .project-links {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .project-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0.5rem 0.9rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-border-strong);
+    color: var(--color-text);
+    background: transparent;
+    transition: background-color var(--duration-fast) var(--ease-smooth),
+                color var(--duration-fast) var(--ease-smooth),
+                gap var(--duration-fast) var(--ease-smooth);
+  }
+
+  .project-link.primary {
+    background: var(--color-text);
+    color: var(--color-bg);
+    border-color: var(--color-text);
+  }
+
+  .project-link.primary:hover {
+    gap: 0.6rem;
+  }
+
+  .project-link:not(.primary):hover {
+    background: rgba(255, 255, 255, 0.06);
+    gap: 0.6rem;
+  }
+
+  /* ---------- 响应式 ---------- */
+  @media (max-width: 768px) {
+    .project-card {
+      padding: 1.4rem;
+    }
+
+    .project-card-head {
+      gap: 0.7rem;
+    }
+
+    .project-icon {
+      width: 44px;
+      height: 44px;
+    }
+
+    .project-icon svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .project-name {
+      font-size: 1.25rem;
+    }
+
+    .projects-container {
+      padding-right: 0;
+    }
+  }
+</style>

@@ -1,0 +1,108 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { getAllTags } from '@/utils/post';
+import { SITE_CONFIG } from '@/config';
+
+const tags = await getAllTags();
+---
+
+<BaseLayout
+  title={`标签 - ${SITE_CONFIG.title}`}
+  description="按标签浏览文章"
+>
+  <div class="page-container">
+    <header class="page-header">
+      <div class="section-label">| TAGS</div>
+      <h1 class="page-title">标签</h1>
+      <p class="page-description">共 {tags.length} 个标签</p>
+    </header>
+
+    <div class="tags-cloud">
+      {tags.map(({ tag, count }) => (
+        <a
+          href={`/tags/${tag}`}
+          class="tag-item"
+          style={`font-size: ${Math.min(1 + count * 0.15, 1.75)}rem;`}
+        >
+          #{tag}
+          <span class="tag-count">({count})</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--spacing-xl) var(--spacing-lg);
+  }
+
+  .page-header {
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-xl);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .page-description {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .tags-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-xl) 0;
+  }
+
+  .tag-item {
+    color: var(--color-primary);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    line-height: 1;
+    text-decoration: none;
+    border-bottom: none;
+  }
+
+  .tag-item:hover {
+    color: var(--color-primary-hover);
+    transform: scale(1.05);
+    border-bottom: none;
+  }
+
+  .tag-count {
+    font-size: 0.75em;
+    color: var(--color-text-muted);
+    margin-left: 0.25em;
+  }
+
+  @media (max-width: 768px) {
+    .page-container {
+      padding: var(--spacing-lg) var(--spacing-md);
+    }
+
+    .page-title {
+      font-size: 2rem;
+    }
+  }
+</style>

@@ -1,0 +1,153 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { SITE_CONFIG } from '@/config';
+
+const videos = [
+  { bvid: 'BV1wXQHYBEtt', title: '视频教程 1' },
+  { bvid: 'BV1FJKezFETE', title: '视频教程 2' },
+  { bvid: 'BV1GQKYzEEfs', title: '视频教程 3' },
+  { bvid: 'BV1yqrNBoEh3', title: '视频教程 4' },
+  { bvid: 'BV1m8rNBaEaX', title: '视频教程 5' },
+  { bvid: 'BV1M8rNBYEj2', title: '视频教程 6' },
+  { bvid: 'BV1ubrNBPEg3', title: '视频教程 7' },
+  { bvid: 'BV1UbrNBAEGD', title: '视频教程 8' },
+  { bvid: 'BV1UbrNBAE3n', title: '视频教程 9' },
+  { bvid: 'BV12YrNB8EW8', title: '视频教程 10' },
+  { bvid: 'BV1xYrNBhEZe', title: '视频教程 11' },
+  { bvid: 'BV14YrNBhEqb', title: '视频教程 12' },
+];
+---
+
+<BaseLayout
+  title={`视频教程 - ${SITE_CONFIG.title}`}
+  description={`${SITE_CONFIG.author}的B站视频教程合集`}
+>
+  <div class="content-wrapper">
+    <header class="videos-header animate-fade-up">
+      <h1>视频教程</h1>
+      <p class="videos-desc">
+        我在 B 站发布的教程视频合集，欢迎
+        <a href={SITE_CONFIG.bilibili} target="_blank" rel="noopener noreferrer">关注我的 B 站频道</a>
+        获取更多内容。
+      </p>
+    </header>
+
+    <div class="videos-grid" data-stagger>
+      {videos.map((video, index) => (
+        <div class="video-card glow-card animate-fade-up">
+          <div class="video-wrapper">
+            <iframe
+              src={`//player.bilibili.com/player.html?bvid=${video.bvid}&page=1`}
+              scrolling="no"
+              border="0"
+              frameborder="no"
+              framespacing="0"
+              allowfullscreen="true"
+              loading="lazy"
+            ></iframe>
+          </div>
+          <div class="video-info">
+            <span class="video-index">#{String(index + 1).padStart(2, '0')}</span>
+            <a
+              href={`https://www.bilibili.com/video/${video.bvid}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="video-link"
+            >
+              在 B 站观看 &rarr;
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .videos-header {
+    padding: var(--spacing-2xl) 0 var(--spacing-xl);
+    text-align: center;
+  }
+
+  .videos-header h1 {
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .videos-desc {
+    font-size: 1.05rem;
+    color: var(--color-text-muted);
+  }
+
+  .videos-desc a {
+    color: var(--color-accent-light);
+    border-bottom-color: rgba(124, 58, 237, 0.3);
+  }
+
+  .videos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+    padding-bottom: var(--spacing-3xl);
+  }
+
+  .video-card {
+    overflow: hidden;
+    border: none;
+  }
+
+  .video-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    background: var(--color-surface-elevated);
+  }
+
+  .video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: var(--radius-md);
+  }
+
+  .video-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+  }
+
+  .video-index {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  .video-link {
+    font-size: 0.84rem;
+    color: var(--color-accent-light);
+    text-decoration: none;
+    border-bottom: none;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+  }
+
+  .video-link:hover {
+    color: var(--color-text-primary);
+    letter-spacing: 0.03em;
+  }
+
+  @media (max-width: 768px) {
+    .videos-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

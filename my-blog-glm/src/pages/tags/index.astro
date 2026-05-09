@@ -1,0 +1,101 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { getAllTags } from '@/utils/post';
+import { SITE_CONFIG } from '@/config';
+
+const tags = await getAllTags();
+---
+
+<BaseLayout
+  title={`标签 - ${SITE_CONFIG.title}`}
+  description="按标签浏览文章"
+>
+  <div class="content-wrapper">
+    <header class="tags-header animate-fade-up">
+      <h1 class="tags-title">标签云</h1>
+      <p class="tags-description">共 {tags.length} 个标签，点击探索感兴趣的话题</p>
+    </header>
+
+    <div class="tags-cloud" data-stagger>
+      {tags.map(({ tag, count }) => (
+        <a
+          href={`/tags/${tag}`}
+          class="tag-chip animate-fade-up"
+          style={`font-size: ${Math.min(0.95 + count * 0.06, 1.35)}rem;`}
+        >
+          #{tag}
+          <span class="tag-count">{count}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .tags-header {
+    text-align: center;
+    padding: var(--spacing-2xl) 0 var(--spacing-xl);
+  }
+
+  .tags-title {
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .tags-description {
+    font-size: 1.05rem;
+    color: var(--color-text-muted);
+  }
+
+  .tags-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: var(--spacing-xl) 0 var(--spacing-3xl);
+  }
+
+  .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.55rem 1.1rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    border-bottom: none;
+    font-weight: 500;
+    transition: all var(--transition-normal);
+    line-height: 1;
+  }
+
+  .tag-chip:hover {
+    color: var(--color-accent-light);
+    border-color: rgba(124, 58, 237, 0.3);
+    background: rgba(124, 58, 237, 0.06);
+    box-shadow: 0 0 16px rgba(124, 58, 237, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .tag-count {
+    font-size: 0.72em;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    opacity: 0.7;
+  }
+
+  @media (max-width: 768px) {
+    .tags-cloud {
+      gap: 0.5rem;
+      padding: var(--spacing-md) 0 var(--spacing-xl);
+    }
+
+    .tag-chip {
+      padding: 0.45rem 0.85rem;
+    }
+  }
+</style>

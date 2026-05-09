@@ -1,0 +1,299 @@
+---
+---
+
+<div class="search-container">
+  <div class="search-box">
+    <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.35-4.35"></path>
+    </svg>
+    <input
+      type="text"
+      id="search-input"
+      class="search-input"
+      placeholder="搜索文章..."
+      data-typing='["搜索文章...","输入关键词...","试试 Python...","试试 游记..."]'
+      aria-label="搜索文章"
+    />
+  </div>
+
+  <div id="search-results" class="search-results" style="display: none;">
+    <div class="results-header">
+      <span id="results-count">搜索结果</span>
+      <button id="close-results" class="close-btn" aria-label="关闭搜索结果">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div id="results-list" class="results-list"></div>
+  </div>
+</div>
+
+<style>
+  .search-container {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .search-box {
+    position: relative;
+    width: 100%;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: var(--spacing-md);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-muted);
+    pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.875rem var(--spacing-md);
+    padding-left: 3rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-bg-card);
+    color: var(--color-text);
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    font-family: var(--font-body);
+  }
+
+  .search-input::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--glow-purple);
+  }
+
+  .search-results {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    right: 0;
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1000;
+  }
+
+  .results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s ease;
+  }
+
+  .close-btn:hover {
+    color: var(--color-text);
+  }
+
+  .results-list {
+    padding: var(--spacing-sm);
+  }
+
+  .result-item {
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-xs);
+    transition: background-color 0.2s ease;
+  }
+
+  .result-item:hover {
+    background-color: var(--color-bg-card-hover);
+  }
+
+  .result-item a {
+    display: block;
+    color: var(--color-text);
+    border-bottom: none;
+  }
+
+  .result-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .result-excerpt {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .result-meta {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    margin-top: 0.25rem;
+    font-family: var(--font-mono);
+  }
+
+  .no-results {
+    padding: var(--spacing-lg);
+    text-align: center;
+    color: var(--color-text-muted);
+  }
+</style>
+
+<script is:inline>
+  (function() {
+    var searchData = [];
+
+    function loadSearchData() {
+      fetch('/search-data.json')
+        .then(function(r) { return r.json(); })
+        .then(function(data) { searchData = data; })
+        .catch(function(err) { console.error('Failed to load search data:', err); });
+    }
+
+    function search(query) {
+      if (!query.trim()) return [];
+      var lowerQuery = query.toLowerCase();
+      return searchData.filter(function(item) {
+        return (
+          item.title.toLowerCase().includes(lowerQuery) ||
+          item.description.toLowerCase().includes(lowerQuery) ||
+          item.tags.some(function(tag) { return tag.toLowerCase().includes(lowerQuery); })
+        );
+      });
+    }
+
+    function renderResults(results) {
+      var resultsContainer = document.getElementById('results-list');
+      var resultsCount = document.getElementById('results-count');
+      var resultsPanel = document.getElementById('search-results');
+      if (!resultsContainer || !resultsCount || !resultsPanel) return;
+
+      if (results.length === 0) {
+        resultsContainer.innerHTML = '<div class="no-results">未找到相关文章</div>';
+        resultsCount.textContent = '无结果';
+      } else {
+        resultsCount.textContent = '找到 ' + results.length + ' 篇文章';
+        resultsContainer.innerHTML = results.map(function(item) {
+          return '<div class="result-item"><a href="' + item.url + '">' +
+            '<div class="result-title">' + item.title + '</div>' +
+            '<div class="result-excerpt">' + item.description + '</div>' +
+            '<div class="result-meta">' + item.category + ' · ' + item.tags.join(', ') + '</div>' +
+            '</a></div>';
+        }).join('');
+      }
+      resultsPanel.style.display = 'block';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      loadSearchData();
+
+      var searchInput = document.getElementById('search-input');
+      var resultsPanel = document.getElementById('search-results');
+      var closeBtn = document.getElementById('close-results');
+      if (!searchInput || !resultsPanel || !closeBtn) return;
+
+      var debounceTimer;
+      searchInput.addEventListener('input', function(e) {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function() {
+          var query = e.target.value;
+          if (query.trim()) {
+            renderResults(search(query));
+          } else {
+            resultsPanel.style.display = 'none';
+          }
+        }, 300);
+      });
+
+      closeBtn.addEventListener('click', function() {
+        resultsPanel.style.display = 'none';
+        searchInput.value = '';
+      });
+
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.search-container')) {
+          resultsPanel.style.display = 'none';
+        }
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          resultsPanel.style.display = 'none';
+        }
+      });
+
+      // 打字动画 - placeholder 循环显示
+      var phrases = JSON.parse(searchInput.dataset.typing || '[]');
+      if (phrases.length > 0) {
+        var phraseIndex = 0;
+        var charIndex = 0;
+        var isDeleting = false;
+        var isPaused = false;
+
+        function typeLoop() {
+          if (searchInput.value.length > 0 || document.activeElement === searchInput) {
+            setTimeout(typeLoop, 500);
+            return;
+          }
+
+          var currentPhrase = phrases[phraseIndex];
+
+          if (isPaused) {
+            isPaused = false;
+            isDeleting = true;
+            setTimeout(typeLoop, 1500);
+            return;
+          }
+
+          if (!isDeleting) {
+            searchInput.placeholder = currentPhrase.substring(0, charIndex + 1);
+            charIndex++;
+            if (charIndex === currentPhrase.length) {
+              isPaused = true;
+              setTimeout(typeLoop, 100);
+              return;
+            }
+            setTimeout(typeLoop, 80 + Math.random() * 40);
+          } else {
+            searchInput.placeholder = currentPhrase.substring(0, charIndex);
+            charIndex--;
+            if (charIndex === 0) {
+              isDeleting = false;
+              phraseIndex = (phraseIndex + 1) % phrases.length;
+              setTimeout(typeLoop, 300);
+              return;
+            }
+            setTimeout(typeLoop, 30);
+          }
+        }
+
+        setTimeout(typeLoop, 1000);
+      }
+    });
+  })();
+</script>

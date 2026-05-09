@@ -1,0 +1,173 @@
+---
+import type { Post } from '@/utils/post';
+import { formatDate } from '@/utils/post';
+import { SITE_CONFIG } from '@/config';
+
+interface Props {
+  post: Post;
+  featured?: boolean;
+}
+
+const { post, featured = false } = Astro.props;
+const { title, description, pubDate, category, tags } = post.data;
+const categoryConfig = SITE_CONFIG.categories[category];
+---
+
+<article class:list={['post-card', { featured }]}>
+  <div class="post-card-inner">
+    <div class="post-meta">
+      <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+      <span class="separator">·</span>
+      <a href={`/category/${category}`} class="category-link">{categoryConfig.displayName}</a>
+    </div>
+
+    <h2 class="post-title">
+      <a href={`/blog/${post.slug}`}>{title}</a>
+    </h2>
+
+    <p class="post-description">{description}</p>
+
+    {tags && tags.length > 0 && (
+      <div class="post-tags">
+        {tags.map(tag => (
+          <a href={`/tags/${tag}`} class="tag">#{tag}</a>
+        ))}
+      </div>
+    )}
+  </div>
+</article>
+
+<style>
+  .post-card {
+    position: relative;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-card);
+    overflow: hidden;
+    transition: transform var(--transition-normal) var(--ease-out),
+                border-color var(--transition-normal) ease,
+                box-shadow var(--transition-normal) ease;
+  }
+
+  .post-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-border-hover);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), var(--shadow-glow);
+  }
+
+  :global(html.light) .post-card:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08), var(--shadow-glow);
+  }
+
+  .post-card-inner {
+    padding: var(--spacing-lg);
+  }
+
+  .post-meta {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin-bottom: var(--spacing-sm);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .separator {
+    margin: 0 0.5em;
+    opacity: 0.5;
+  }
+
+  .category-link {
+    color: var(--color-accent-2);
+    text-decoration: none;
+    border-bottom: none;
+    transition: color var(--transition-fast) ease;
+  }
+
+  .category-link:hover {
+    color: var(--color-accent-3);
+    border-bottom: none;
+  }
+
+  .post-title {
+    font-size: 1.4rem;
+    margin-bottom: var(--spacing-xs);
+    line-height: 1.3;
+    font-weight: 600;
+  }
+
+  .post-title a {
+    color: var(--color-text);
+    text-decoration: none;
+    border-bottom: none;
+    transition: color var(--transition-fast) ease;
+  }
+
+  .post-title a:hover {
+    color: var(--color-primary-hover);
+    border-bottom: none;
+  }
+
+  .post-description {
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-sm);
+    font-size: 0.95rem;
+  }
+
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    border-bottom: none;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    transition: all var(--transition-fast) ease;
+    backdrop-filter: blur(4px);
+  }
+
+  :global(html.light) .tag {
+    background: rgba(0, 0, 0, 0.03);
+  }
+
+  .tag:hover {
+    color: var(--color-accent-2);
+    border-color: var(--color-accent-2);
+    background: rgba(139, 92, 246, 0.08);
+  }
+
+  .featured .post-card-inner {
+    padding: var(--spacing-xl);
+  }
+
+  .featured .post-title {
+    font-size: 1.75rem;
+  }
+
+  @media (max-width: 768px) {
+    .post-card-inner {
+      padding: var(--spacing-md);
+    }
+
+    .post-title {
+      font-size: 1.2rem;
+    }
+
+    .featured .post-card-inner {
+      padding: var(--spacing-lg);
+    }
+
+    .featured .post-title {
+      font-size: 1.4rem;
+    }
+  }
+</style>

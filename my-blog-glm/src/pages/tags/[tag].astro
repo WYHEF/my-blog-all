@@ -1,0 +1,73 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import PostCard from '@components/PostCard.astro';
+import { getAllTags, getPostsByTag, extractFirstImage } from '@/utils/post';
+import { SITE_CONFIG } from '@/config';
+
+export async function getStaticPaths() {
+  const tags = await getAllTags();
+
+  return Promise.all(
+    tags.map(async ({ tag }) => {
+      const posts = await getPostsByTag(tag);
+      return {
+        params: { tag },
+        props: { posts, tag }
+      };
+    })
+  );
+}
+
+const { posts, tag } = Astro.props;
+
+// 提取封面图
+const postsWithCovers = posts.map(post => ({
+  post,
+  coverImage: extractFirstImage(post.body ?? '')
+}));
+---
+
+<BaseLayout
+  title={`#${tag} - ${SITE_CONFIG.title}`}
+  description={`标签「${tag}」下的所有文章`}
+>
+  <div class="content-wrapper">
+    <header class="tag-header animate-fade-up">
+      <span class="tag-symbol gradient-text">#{tag}</span>
+      <p class="tag-count">{posts.length} 篇相关文章</p>
+    </header>
+
+    <div class="posts-list" data-stagger>
+      {postsWithCovers.map(({ post, coverImage }) => (
+        <PostCard post={post} coverImage={coverImage} />
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .tag-header {
+    padding: var(--spacing-2xl) 0 var(--spacing-xl);
+    text-align: center;
+  }
+
+  .tag-symbol {
+    display: inline-block;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .tag-count {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+  }
+
+  .posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding-bottom: var(--spacing-xl);
+  }
+</style>

@@ -1,0 +1,189 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { SITE_CONFIG } from '@/config';
+---
+
+<BaseLayout
+  title={`404 - ${SITE_CONFIG.title}`}
+  description="页面未找到"
+>
+  <div class="error-container">
+    <div class="error-glow" aria-hidden="true"></div>
+    <div class="error-glow error-glow--secondary" aria-hidden="true"></div>
+
+    <div class="error-content">
+      <span class="error-kicker">[ 404 / NOT FOUND ]</span>
+      <h1 class="error-code">404</h1>
+      <h2 class="error-title">Lost in the void.</h2>
+      <p class="error-description">
+        你访问的页面不存在,或者已经飘到星空之外。
+        让我们回到地面,从首页继续。
+      </p>
+
+      <div class="error-actions">
+        <a href="/" class="error-btn primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5"></path>
+            <path d="m12 19-7-7 7-7"></path>
+          </svg>
+          返回首页
+        </a>
+        <a href="/blog" class="error-btn">
+          浏览文章
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14"></path>
+            <path d="m12 5 7 7-7 7"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .error-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - var(--header-height) - 200px);
+    padding: var(--spacing-xl) 0;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  /* ---------- 背景光晕 ---------- */
+  .error-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 720px;
+    height: 720px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(120, 170, 255, 0.35), transparent 60%);
+    filter: blur(120px);
+    opacity: 0.7;
+    z-index: -1;
+    pointer-events: none;
+    animation: errorBreathe 9s var(--ease-smooth) infinite;
+  }
+
+  .error-glow--secondary {
+    width: 480px;
+    height: 480px;
+    background: radial-gradient(circle, rgba(255, 138, 61, 0.25), transparent 60%);
+    transform: translate(-30%, -70%);
+    animation-delay: -3s;
+    animation-duration: 11s;
+  }
+
+  @keyframes errorBreathe {
+    0%, 100% { opacity: 0.55; transform: translate(-50%, -50%) scale(1); }
+    50%      { opacity: 0.8;  transform: translate(-50%, -50%) scale(1.06); }
+  }
+
+  /* ---------- 内容 ---------- */
+  .error-content {
+    text-align: center;
+    max-width: 560px;
+  }
+
+  .error-kicker {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.22em;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .error-code {
+    font-family: var(--font-display);
+    font-size: clamp(7rem, 22vw, 14rem);
+    font-weight: 500;
+    line-height: 0.9;
+    letter-spacing: -0.06em;
+    margin: 0 0 var(--spacing-md);
+    background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.4) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .error-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 500;
+    color: var(--color-text);
+    margin: 0 0 var(--spacing-md);
+    letter-spacing: -0.02em;
+  }
+
+  .error-description {
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    line-height: 1.7;
+    margin: 0 0 var(--spacing-xl);
+  }
+
+  /* ---------- 按钮 ---------- */
+  .error-actions {
+    display: flex;
+    gap: 0.7rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .error-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0.65rem 1.1rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-border-strong);
+    color: var(--color-text);
+    background: transparent;
+    transition: background-color var(--duration-fast) var(--ease-smooth),
+                color var(--duration-fast) var(--ease-smooth),
+                gap var(--duration-fast) var(--ease-smooth);
+  }
+
+  .error-btn.primary {
+    background: var(--color-text);
+    color: var(--color-bg);
+    border-color: var(--color-text);
+  }
+
+  .error-btn.primary:hover {
+    gap: 0.8rem;
+  }
+
+  .error-btn:not(.primary):hover {
+    background: rgba(255, 255, 255, 0.06);
+    gap: 0.8rem;
+  }
+
+  /* ---------- 响应式 ---------- */
+  @media (max-width: 768px) {
+    .error-container {
+      min-height: calc(100vh - var(--header-height) - 100px);
+    }
+
+    .error-actions {
+      flex-direction: column;
+      width: 100%;
+      max-width: 280px;
+      margin: 0 auto;
+    }
+
+    .error-btn {
+      justify-content: center;
+      width: 100%;
+    }
+  }
+</style>

@@ -1,0 +1,119 @@
+---
+import type { Post } from '@/utils/post';
+import { formatDate } from '@/utils/post';
+import { SITE_CONFIG } from '@/config';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const { title, description, pubDate, category, tags } = post.data;
+const categoryConfig = SITE_CONFIG.categories[category];
+---
+
+<article class="post-item">
+  <div class="post-meta">
+    <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+    <span class="separator">/</span>
+    <a href={`/category/${category}`} class="category-link">{categoryConfig.displayName}</a>
+  </div>
+  
+  <h2 class="post-title">
+    <a href={`/blog/${post.slug}`}>{title}</a>
+  </h2>
+  
+  <p class="post-description">{description}</p>
+  
+  {tags && tags.length > 0 && (
+    <div class="post-tags">
+      {tags.map(tag => (
+        <a href={`/tags/${tag}`} class="tag">#{tag}</a>
+      ))}
+    </div>
+  )}
+</article>
+
+<style>
+  .post-item {
+    padding: var(--spacing-lg) 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  .post-item:last-child {
+    border-bottom: none;
+  }
+  
+  .post-meta {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xs);
+    font-family: var(--font-mono); /* 使用等宽字体，更有技术文档感 */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .separator {
+    margin: 0 0.5em;
+    opacity: 0.5;
+  }
+  
+  .category-link {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+  
+  .category-link:hover {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+  }
+  
+  .post-title {
+    font-family: var(--font-heading); /* 衬线体标题 */
+    font-size: 1.75rem; /* 加大标题 */
+    margin-bottom: var(--spacing-xs);
+    line-height: 1.25;
+    font-weight: 600;
+  }
+  
+  .post-title a {
+    color: var(--color-text);
+    text-decoration: none;
+    border-bottom: none;
+  }
+  
+  .post-title a:hover {
+    color: var(--color-primary); /* 悬停变色 */
+  }
+  
+  .post-description {
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-sm);
+    font-size: 1.05rem; /* 稍微加大正文 */
+  }
+  
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+  }
+  
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    border-bottom: none;
+    background-color: var(--color-bg-secondary);
+    padding: 0.1rem 0.4rem;
+    border-radius: var(--radius-sm);
+  }
+  
+  .tag:hover {
+    color: var(--color-primary);
+    background-color: var(--color-border); /* 稍微深一点的背景 */
+  }
+</style>
+
