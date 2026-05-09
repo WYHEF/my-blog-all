@@ -74,33 +74,6 @@
 | DeepSeek | 简单任务又快又好 | 复杂任务能力有限 |
 | MIMO | 长文本处理强 | Token 消耗大，前端效果一般 |
 
-## 其他功能测试
-
-### Codex 分叉功能
-Codex 的分叉功能特别好，可以在对话中开新分支处理额外问题，无需另开窗口。
-
-![Codex分叉功能](images/mimo-use-1.png)
-
-### Claude Code Multi-Agent
-Claude Code 也支持 multi-agent，但效果不如腾讯 CodeBuddy CLI。
-
-![Multi-Agent效果](images/mimo-use-24.png)
-
-### 小米模型工具调用
-小米模型支持 tool 第三方工具调用，包括联网搜索。
-
-![工具调用效果](images/mimo-use-25.png)
-
-### MIMO 2.5 Pro 道德限制
-MIMO 2.5 Pro 具有道德感和法律意识，从底层训练就做出了规范性限制。
-
-![道德限制效果](images/mimo-use-26.png)
-
-### 小米模型配置说明
-VS Code 中的插件配置参考：https://platform.xiaomimimo.com/docs/zh-CN/integration/claudecode
-
-![配置说明](images/mimo-use-21.png)
-
 ## 相关资源
 
 ### 详细文档
