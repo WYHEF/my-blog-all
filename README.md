@@ -134,6 +134,11 @@ VS Code 中的插件配置参考：https://platform.xiaomimimo.com/docs/zh-CN/in
 
 ## 相关资源
 
+### 详细文档
+- **飞书文档**: [小米 MIMO 使用体验记录](https://tcnsc6emi3jy.feishu.cn/wiki/Tv1kwF72PiF06UkMOjmcSsCNnsh?from=from_copylink)
+- **博客文章**: [小米 MIMO 使用体验](https://new.wyhef.cloud/blog/%E5%B0%8F%E7%B1%B3mimo)
+
+### 工具和平台
 - 小米 MIMO 平台: https://platform.xiaomimimo.com
 - CC Switch: 用于在 Claude Code 中切换不同 AI 模型
 - Claude Code: Anthropic 官方 CLI 工具
