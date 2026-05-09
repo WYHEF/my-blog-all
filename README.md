@@ -101,37 +101,6 @@ VS Code 中的插件配置参考：https://platform.xiaomimimo.com/docs/zh-CN/in
 
 ![配置说明](images/mimo-use-21.png)
 
-## 使用体验记录
-
-### 4月30日
-- 发现 MIMO Token 消耗比 DeepSeek V3 大约 5 倍
-- MIMO 没有视觉识别功能（口头答应但未真正识别图片）
-- 使用 MIMO 制作 Word 文档效果出色，但需要解决字体问题
-
-### 5月1日
-- 确认 MIMO 2.5 全系列只支持文本推理
-- MIMO 2.5 是多模态模型
-- Token Plan 只支持特定模型
-
-### 5月2日
-- MIMO 处理简单任务时，V2.5 比 V2.5 Pro 更好
-- MIMO 支持 tool 第三方工具调用
-- MIMO 2.5 Pro 有道德和法律意识限制
-
-### 5月3日
-- Codex 分叉功能特别好用
-- MIMO 2.5 Pro 细节处理更好
-- MIMO 2.5 确实是多模态模型
-- 小米模型需要加后缀 [1M]，否则默认 256k
-
-### 5月4日
-- 完成多模型前端效果对比测试
-- 确定前端效果排名：Claude >= KIMI > GPT >>> GLM > DS = MIMO
-
-### 5月6日
-- 小米 MIMO 在 Claude Code 中不支持 websearch
-- Minimax 采用网络搜索 MCP 曲线救国
-
 ## 相关资源
 
 ### 详细文档
