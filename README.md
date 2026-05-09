@@ -87,7 +87,7 @@
 
 ## 作者
 
-- B站ID: WYHEF
+- B站ID: 五氧化二钒
 - GitHub: WYHEF
 
 ## 许可证
